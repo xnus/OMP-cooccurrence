@@ -1,7 +1,6 @@
 
 # function ps2sitepsls generates list of real local communitis
 # Note that the factor in the function is "location". Change it to the factor you want.
-
 ps2sitepsls <- function(inputps)
 {
 	temp.sites <- unique(sample_data(inputps)$Location)
@@ -17,7 +16,7 @@ ps2sitepsls <- function(inputps)
 
 
 # Calculate core taxon set at thresholds of inputfreqthres and inputRAthres
-# inputRAthres here is fixed, usually set to 0.
+# inputRAthres: a fixed value representing minimal RA required, usually set to 0.
 ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
 	{
 	tempps1 <- transform_sample_counts(inputps, function(x){x / sum(x)}) # ra transforms
@@ -49,8 +48,7 @@ ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
 	}
 
 # function ps2TierNCorepsls identify the TierN core taxa with a phyloseq object.
-# inputRAthres: the threshold of 
-# inputN: how 
+# inputN: the numbers of frequency thresholds. For example, inputN = 100, the frequency thresholds are 0, 1, 2, 3,..., 99, 100; inputN = 20, the frequency thresholds are 0, 5, 10, 15,..., 100.  
 ps2TierNCorepsls <- function(inputps, inputRAthres, inputN)
 {
 	k <- as.integer(100/inputN)
@@ -77,7 +75,7 @@ psls2TierNCorepslsls <- function(inputpsls, inputRAthres, inputN)
 	temp.pslsls
 }
 
-# 用上面已经计算了的core的psls得到通过TierN阈值的taxa，列出并生成list
+# generate a core taxa lists with core sets calculated from psls
 Corepsls2taxls <- function(inputTierNCorepsls)
 {
 	Nps <- length(inputTierNCorepsls)
@@ -94,7 +92,7 @@ Corepsls2taxls <- function(inputTierNCorepsls)
 	temptaxls
 }
 
-# 看看ls里有多少个NULL
+# check how many NULL in a list
 checkNULLinls <- function (inputls)
 	{
 	nNULL = 0
@@ -105,7 +103,8 @@ checkNULLinls <- function (inputls)
 	nNULL
 	}
 
-# inputtaxlv处输入分类等级“Species”等
+# count taxa in the inputed list.
+# inputtaxlv: taxonomical hierarchy, e.g. "Species"
 counttaxls <- function(inputtaxls, inputtaxlv)
 	{
 	Ntaxls <- length(inputtaxls)
@@ -133,12 +132,13 @@ counttaxls <- function(inputtaxls, inputtaxlv)
 	tempcounttaxls
 	}
 
-# 通过TierNCorepslsls或TierNnonCorepslsls，生成counttaxls的ls，格式为list，每个[[i]]是taxls的dataframe，1:i是N个阈值阶段
+# counttaxls, a list object, is produced from functions TierNCorepslsls or TierNnonCorepslsls,
+# each [[i]] is the dataframe of taxls, 1:i is the n intervals of frequency
 counttaxdfls <- function(inputpslsls, inputtaxlv)
 {
 	Nps <- length(inputpslsls)
 	Nthres <- length(inputpslsls[[1]])
-	# 先对inputpslsls[[j]][[i]]中相同J（即相同阈值）的i个ps，用repls2taxls计算taxls，得到df
+	# find i ps objects of same J value in inputpslsls[[j]][[i]], then calculate taxls with repls2taxls and generate a dataframe
 	temptaxdfls <- vector("list", Nthres)
 	for (i in 1:Nthres)
 	{
