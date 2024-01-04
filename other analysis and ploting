@@ -808,115 +808,26 @@ MRMfit.allF
 
 
 ##########################################################################################
-############################## windowed rolled ###########################################
+############################## environmental intervals ###################################
 ##########################################################################################
 
+# see branch "environmental intervals" for functions
 
+test.interval(ps.allA, "SSalt", 10, 0.5); test.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
+test.interval(ps.allA, "TN", 10, 0.5); test.interval(ps.TN.ln.allA, "TN", 10, 0.5)
+test.interval(ps.allA, "pH", 10, 0.5); test.interval(ps.pH.ln.allA, "pH", 10, 0.5)
+test.interval(ps.allA, "Precipitation.Seasonality", 10, 0.5); test.interval(ps.PPS.ln.allA, "Precipitation.Seasonality", 10, 0.5)
+test.interval(ps.allA, "AN", 10, 0.5); test.interval(ps.AN.ln.allA, "AN", 10, 0.5)
 
+test.interval(ps.allB, "Precipitation.Seasonality", 10, 0.5); test.interval(ps.PPS.ln.allB, "Precipitation.Seasonality", 10, 0.5)
+test.interval(ps.allB, "Moisture", 10, 0.5); test.interval(ps.Moisture.ln.allB, "Moisture", 10, 0.5)
 
-########### 将给定环境因子划分梯度
-# 检验不同环境梯度下的共发生网络。
-# 根据目前结果，对细菌和真菌进行altitude划分区间，对古菌进行Ssalt划分区间。
-# 注意一点是，Ssalt分布不均匀。
+test.interval(ps.allF, "TN", 10, 0.5); test.interval(ps.TN.ln.allF, "TN", 10, 0.5)
+test.interval(ps.allF, "Moisture", 10, 0.5); test.interval(ps.Moisture.ln.allF, "Moisture", 10, 0.5)
+test.interval(ps.allF, "TOM", 10, 0.5); test.interval(ps.TOM.ln.allF, "TOM", 10, 0.5)
+test.interval(ps.allF, "SSalt", 10, 0.5); test.interval(ps.SSalt.ln.allF, "SSalt", 10, 0.5)
+test.interval(ps.allF, "AN", 10, 0.5); test.interval(ps.AN.ln.allF, "AN", 10, 0.5)
 
-
-
-# 计算顺序，将给定环境因子划分梯度，并且设置梯度间的overlap
-# overlap=0, range/i
-# overlap = 0.3, range/i (1-0.3)+range/i
-# 对于Ov为正
-# 当总长度为y，计算出在给定Ov(overlap)和n(区间数)时，每段区间长度x为
-# (n-1)(1-Ov)x+x=y
-# 所以x=y/(n+Ov-n*Ov)
-# 则区间起始为(0,x),(x-Ov*x,2x-Ov*x),(2x-2Ov*x, 3x-2Ov*x),(3x-3Ov*x,4x-3Ov*x),((n-1)(1-Ov)x,(n+Ov-n*Ov)x)
-# 对于Ov为负，亦是如此
-
-
-# 分成10个区间，overlap为0.5
-
-F.intervals <- function(inputmin, inputmax, inputn, inputoverlap)
-{
-    F.range <- inputmax - inputmin
-    temp.x <- F.range/(inputn+inputoverlap-inputn*inputoverlap)
-    results<-matrix(nrow=0,ncol=2)
-    for (i in 1:inputn)
-    {
-        temp.left <- (i-1)*(1-inputoverlap)*temp.x
-        temp.right <- (i+inputoverlap-i*inputoverlap)*temp.x
-        new.row<-c(inputmin+temp.left, inputmin+temp.right)
-        results<-rbind(results,new.row)
-    }
-	results <- as.data.frame(results)
-	colnames(results)<-c("LeftBound","RightBound")
-	results
-}
-
-
-subsetps.interval <- function(inputps, inputenvfactor, inputleft, inputright)
-	{
-    outputps <- prune_samples(as.logical(sample_data(inputps)[,inputenvfactor]>=inputleft&sample_data(inputps)[,inputenvfactor]<=inputright), inputps) 
-    outputps <- prune_taxa(taxa_sums(outputps) > 0, outputps)
-	outputps
-    }
-
-ps2ls.interval <- function(inputps, inputenvfactor, inputn, inputoverlap)
-{
-	F.min <- min(sample_data(inputps)[,inputenvfactor])
-    F.max <- max(sample_data(inputps)[,inputenvfactor])
-    temp.intervals <- F.intervals(F.min, F.max, inputn, inputoverlap)
-    temp.subpsls <- list(NULL)
-    for (j in 1:inputn)
-    {
-    # must test whether sample_data have values within intervals, otherwise prune_sample would get error.
-    # use function "any", to test whether there is any factor belong to certain interval.
-    # an inverse function is "all".
-    if (any(sample_data(inputps)[,inputenvfactor]>=temp.intervals[j,1]&sample_data(inputps)[,inputenvfactor]<=temp.intervals[j,2]))
-        {
-        temp.subps <- subsetps.interval(inputps, inputenvfactor, temp.intervals[j,1], temp.intervals[j,2])
-        }
-    else
-        {
-        # set false case to 0, and will be distinguished with is.atomic later
-        temp.subps <- 0
-        }
-        temp.subpsls[[j]] <- temp.subps
-    }
-    temp.subpsls
-}
-
-allA
-"SSalt"
-"TN"
-"pH"
-"Precipitation.Seasonality"
-"AN"
-allB
-"Precipitation.Seasonality"
-"Moisture"
-allF
-"TN"
-"Moisture"
-"TOM"
-"SSalt"
-"AN"
-
-# 原值
-intvls.SSalt.allA <- ps2ls.interval(ps.allA, "SSalt", 10, 0.5)
-intvls.TN.allA <- ps2ls.interval(ps.allA, "TN", 10, 0.5)
-intvls.pH.allA <- ps2ls.interval(ps.allA, "pH", 10, 0.5)
-intvls.PPS.allA <- ps2ls.interval(ps.allA, "Precipitation.Seasonality", 10, 0.5)
-intvls.AN.allA <- ps2ls.interval(ps.allA, "AN", 10, 0.5)
-
-intvls.PPS.allB <- ps2ls.interval(ps.allB, "Precipitation.Seasonality", 10, 0.5)
-intvls.Moisture.allB <- ps2ls.interval(ps.allB, "Moisture", 10, 0.5)
-
-intvls.TN.allF <- ps2ls.interval(ps.allF, "TN", 10, 0.5)
-intvls.Moisture.allF <- ps2ls.interval(ps.allF, "Moisture", 10, 0.5)
-intvls.TOM.allF <- ps2ls.interval(ps.allF, "TOM", 10, 0.5)
-intvls.SSalt.allF <- ps2ls.interval(ps.allF, "SSalt", 10, 0.5)
-intvls.AN.allF <- ps2ls.interval(ps.allF, "AN", 10, 0.5)
-
-# ln转化后
 ps.SSalt.ln.allA <- phyloseq(otu_table(ps.allA), sample_data(cbind(sample_data(ps.allA)[,"Location"], log(sample_data(ps.allA)[,"SSalt"], exp(1)))), tax_table(ps.allA))
 ps.TN.ln.allA <- phyloseq(otu_table(ps.allA), sample_data(cbind(sample_data(ps.allA)[,"Location"], log(sample_data(ps.allA)[,"TN"], exp(1)))), tax_table(ps.allA))
 ps.pH.ln.allA <- phyloseq(otu_table(ps.allA), sample_data(cbind(sample_data(ps.allA)[,"Location"], log(sample_data(ps.allA)[,"pH"], exp(1)))), tax_table(ps.allA))
@@ -931,10 +842,6 @@ ps.Moisture.ln.allF <- phyloseq(otu_table(ps.allF), sample_data(cbind(sample_dat
 ps.TOM.ln.allF <- phyloseq(otu_table(ps.allF), sample_data(cbind(sample_data(ps.allF)[,"Location"], log(sample_data(ps.allF)[,"TOM"], exp(1)))), tax_table(ps.allF))
 ps.SSalt.ln.allF <- phyloseq(otu_table(ps.allF), sample_data(cbind(sample_data(ps.allF)[,"Location"], log(sample_data(ps.allF)[,"SSalt"], exp(1)))), tax_table(ps.allF))
 ps.AN.ln.allF <- phyloseq(otu_table(ps.allF), sample_data(cbind(sample_data(ps.allF)[,"Location"], log(sample_data(ps.allF)[,"AN"], exp(1)))), tax_table(ps.allF))
-
-# F.intervals(min(sample_data(ps.SSalt.ln.allA)),max(sample_data(ps.SSalt.ln.allA)),10,0.3)
-# F.intervals(min(sample_data(ps.Altitude.ln.allB)),max(sample_data(ps.Altitude.ln.allB)),10,0.3)
-# F.intervals(min(sample_data(ps.Altitude.ln.allF)),max(sample_data(ps.Altitude.ln.allF)),10,0.3)
 
 intvls.SSalt.ln.allA <- ps2ls.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
 intvls.TN.ln.allA <- ps2ls.interval(ps.TN.ln.allA, "TN", 10, 0.5)
@@ -952,208 +859,72 @@ intvls.SSalt.ln.allF <- ps2ls.interval(ps.SSalt.ln.allF, "SSalt", 10, 0.5)
 intvls.AN.ln.allF <- ps2ls.interval(ps.AN.ln.allF, "AN", 10, 0.5)
 
 
+##########################################################################################
+################################### TITAN analysis #######################################
+##########################################################################################
 
-test.interval <- function(inputps, inputenvfactor, inputn, inputoverlap)
+## archaeal dataset
+
+library(TITAN2)
+
+# remove taxa of frequency < 3
+ps.min3.SSalt.ln.allA <- prune_taxa(colSums(otu_table(ps.SSalt.ln.allA) != 0) > 2, ps.SSalt.ln.allA) # colSums计算的是otu_table(ps.SSalt.ln.allA) != 0中True的数量，大于2时，满足minFre为3的要求
+ps.min3.TN.ln.allA <- prune_taxa(colSums(otu_table(ps.TN.ln.allA) != 0) > 2, ps.TN.ln.allA)
+ps.min3.pH.ln.allA <- prune_taxa(colSums(otu_table(ps.pH.ln.allA) != 0) > 2, ps.pH.ln.allA)
+ps.min3.PPS.ln.allA <- prune_taxa(colSums(otu_table(ps.PPS.ln.allA) != 0) > 2, ps.PPS.ln.allA)
+ps.min3.AN.ln.allA <- prune_taxa(colSums(otu_table(ps.AN.ln.allA) != 0) > 2, ps.AN.ln.allA)
+
+df.min3.SSalt.ln.allA <- as.data.frame(as(otu_table(ps.min3.SSalt.ln.allA),"matrix")); colnames(df.min3.SSalt.ln.allA) <- tax_table(ps.min3.SSalt.ln.allA)[,7]
+colnames(df.min3.SSalt.ln.allA) <- gsub("_", " ", colnames(df.min3.SSalt.ln.allA))
+df.min3.TN.ln.allA <- as.data.frame(as(otu_table(ps.min3.TN.ln.allA),"matrix")); colnames(df.min3.TN.ln.allA) <- tax_table(ps.min3.TN.ln.allA)[,7]
+colnames(df.min3.TN.ln.allA) <- gsub("_", " ", colnames(df.min3.TN.ln.allA))
+df.min3.pH.ln.allA <- as.data.frame(as(otu_table(ps.min3.pH.ln.allA),"matrix")); colnames(df.min3.pH.ln.allA) <- tax_table(ps.min3.pH.ln.allA)[,7]
+colnames(df.min3.pH.ln.allA) <- gsub("_", " ", colnames(df.min3.pH.ln.allA))
+df.min3.PPS.ln.allA <- as.data.frame(as(otu_table(ps.min3.PPS.ln.allA),"matrix")); colnames(df.min3.PPS.ln.allA) <- tax_table(ps.min3.PPS.ln.allA)[,7]
+colnames(df.min3.PPS.ln.allA) <- gsub("_", " ", colnames(df.min3.PPS.ln.allA))
+df.min3.AN.ln.allA <- as.data.frame(as(otu_table(ps.min3.AN.ln.allA),"matrix")); colnames(df.min3.AN.ln.allA) <- tax_table(ps.min3.AN.ln.allA)[,7]
+colnames(df.min3.AN.ln.allA) <- gsub("_", " ", colnames(df.min3.AN.ln.allA))
+
+titan.SSalt.ln.allA <- titan(sample_data(ps.min3.SSalt.ln.allA), df.min3.SSalt.ln.allA)
+titan.TN.ln.allA <- titan(sample_data(ps.min3.TN.ln.allA), df.min3.TN.ln.allA)
+titan.pH.ln.allA <- titan(sample_data(ps.min3.pH.ln.allA), df.min3.pH.ln.allA)
+titan.PPS.ln.allA <- titan(sample_data(ps.min3.PPS.ln.allA), df.min3.PPS.ln.allA)
+titan.AN.ln.allA <- titan(sample_data(ps.min3.AN.ln.allA), df.min3.AN.ln.allA)
+
+plot_taxa_ridges(titan.SSalt.ln.allA, xlab = "Soluble salt")
+plot_taxa_ridges(titan.TN.ln.allA, xlab = "Total nitrogen")
+plot_taxa_ridges(titan.pH.ln.allA, xlab = "pH")
+plot_taxa_ridges(titan.PPS.ln.allA, xlab = "Precipitation seasonality")
+plot_taxa_ridges(titan.AN.ln.allA, xlab = "Available nitrogen")
+
+library(purrr)
+sppmax.SSalt.ln.allA <- titan.SSalt.ln.allA %>% pluck("sppmax") %>% tibble::as_tibble() %>% mutate(id = row.names(titan.SSalt.ln.allA$sppmax))
+sppmax.SSalt.ln.allA$filter <- 0
+pure_and_reliable_ndcs.SSalt.ln.allA <- with(sppmax.SSalt.ln.allA$filter <- 0, which(sppmax.SSalt.ln.allA$purity >= titan.SSalt.ln.allA$arguments[[7]] & sppmax.SSalt.ln.allA$reliability >= titan.SSalt.ln.allA$arguments[[8]]))
+View(sppmax.SSalt.ln.allA[pure_and_reliable_ndcs.SSalt.ln.allA,])
+
+TITAN.extract <- function(inputTITAN.out)
 {
-	templs <- ps2ls.interval(inputps, inputenvfactor, inputn, inputoverlap)
-	tempdf <- t(dim(otu_table(templs[[1]])))
-	for (i in 2:inputn)
-	{
-		# if (templs[[i]] == 0)
-		if (!is.atomic(templs[[i]]))
-		{tempdf <- rbind(tempdf, t(dim(otu_table(templs[[i]]))))}
-		else
-		{tempdf <- rbind(tempdf, c(0,0))}
-	}
-	tempdf
+	library(purrr)
+	temp.sppmax <- as.data.frame(pluck(inputTITAN.out, "sppmax"))
+	temp.sppmax$id <- rownames(temp.sppmax)
+	temp.sppmax$filter <- 0
+	temp.extract <- temp.sppmax[temp.sppmax$purity >= inputTITAN.out$arguments[[7]] & temp.sppmax$reliability >= inputTITAN.out$arguments[[8]],]
+	temp.extract
 }
 
-test.interval(ps.allA, "SSalt", 10, 0.5); test.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
-test.interval(ps.allA, "TN", 10, 0.5); test.interval(ps.TN.ln.allA, "TN", 10, 0.5)
-test.interval(ps.allA, "pH", 10, 0.5); test.interval(ps.pH.ln.allA, "pH", 10, 0.5)
-test.interval(ps.allA, "Precipitation.Seasonality", 10, 0.5); test.interval(ps.PPS.ln.allA, "Precipitation.Seasonality", 10, 0.5)
-test.interval(ps.allA, "AN", 10, 0.5); test.interval(ps.AN.ln.allA, "AN", 10, 0.5)
-
-test.interval(ps.allB, "Precipitation.Seasonality", 10, 0.5); test.interval(ps.PPS.ln.allB, "Precipitation.Seasonality", 10, 0.5)
-test.interval(ps.allB, "Moisture", 10, 0.5); test.interval(ps.Moisture.ln.allB, "Moisture", 10, 0.5)
-
-test.interval(ps.allF, "TN", 10, 0.5); test.interval(ps.TN.ln.allF, "TN", 10, 0.5)
-test.interval(ps.allF, "Moisture", 10, 0.5); test.interval(ps.Moisture.ln.allF, "Moisture", 10, 0.5)
-test.interval(ps.allF, "TOM", 10, 0.5); test.interval(ps.TOM.ln.allF, "TOM", 10, 0.5)
-test.interval(ps.allF, "SSalt", 10, 0.5); test.interval(ps.SSalt.ln.allF, "SSalt", 10, 0.5)
-test.interval(ps.allF, "AN", 10, 0.5); test.interval(ps.AN.ln.allF, "AN", 10, 0.5)
-
-# 只有allF的Moisture在ln下有更多的0，其他都是ln下0更少。
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
+TITANextr.SSalt.ln.allA <- TITAN.extract(titan.SSalt.ln.allA)
+TITANextr.TN.ln.allA <- TITAN.extract(titan.TN.ln.allA)
+TITANextr.pH.ln.allA <- TITAN.extract(titan.pH.ln.allA)
+TITANextr.PPS.ln.allA <- TITAN.extract(titan.PPS.ln.allA)
+TITANextr.AN.ln.allA <- TITAN.extract(titan.AN.ln.allA)
 
 
-############### 计算二元网络一元投影后的edge list
-# 在数学上很简单，就是把成对数据中，一方为0的一对删掉即可。
-# 下面分为三个文件分别来计算
+##########################################################################################
+################################### OMP-based-co-occurrence ##############################
+##########################################################################################
 
-# 用cor.test计算网络的基本函数，得到一个edge的list
-df2edge.bi.mod <- function(inputdf) 
-	{
-	results<-matrix(nrow=0,ncol=6)
-	for (i in 1:(dim(inputdf)[2]-1)) 
-		{
-
-		tempresultdf <- foreach (j = (i+1):dim(inputdf)[2], .combine=data.frame, .packages = c("ShortRead", "Biostrings","phyloseq","vegan")) %dopar%
-			{
-			tempx <- as.vector(inputdf[, i])
-			tempy <- as.vector(inputdf[, j])
-            species1.ab<-sum(tempx)
-            species2.ab<-sum(tempy)
-
-			nonZero <- tempx*tempy != 0
-			tempx <- tempx[nonZero]
-			tempy <- tempy[nonZero]
-
-			if(length(tempx)>2)
-			{
-                test<-cor.test(tempx, tempy, method="spearman", na.action=na.rm)
-                rho<-as.numeric(test$estimate)
-                p.value<-as.numeric(test$p.value)
-			}
-			else
-			{
-				rho <- 0
-				p.value <- 1
-			}
-			new.row<-c(colnames(inputdf)[i],colnames(inputdf)[j],rho,p.value,species1.ab,species2.ab)
-			}
-			gc()
-			results<-rbind(results,t(tempresultdf))
-            rm(tempresultdf)
-			print(paste(i, "out of", dim(inputdf)[2], sep = " "))
-		}
-	# results <- as.data.frame(results)
-	colnames(results)<-c("ASV1","ASV2","rho","p.value","ab1","ab2")
-	results
-	}
-
-# 限定rho和p值来筛选df2edge得到的edge list
-edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
-	{
-	edgelstemp <- base::transform(inputedgelst, p.value = as.numeric(as.character(p.value)), rho = as.numeric(as.character(rho))) # 如果不加as.character，会变成莫名其妙的整数
-	edgelstemp <- edgelstemp[edgelstemp[,"p.value"] < inputp,]
-	edgelstemp <- edgelstemp[edgelstemp[,"rho"] < inputrhobtm|edgelstemp[,"rho"] > inputrhoupper,]
-	edgelstemp
-	}
-
-ps2edgels.bi <- function(inputps)
-	{
-	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-	colnames(tempdf) <- as.data.frame(tax_table(inputps))[,dim(tax_table(inputps))[2]]
-	tempedgels <- df2edge.bi.mod(tempdf)
-	tempedgels
-	}
-
-
-
-# 计算出各区间的edgels之后，我们希望看到相互作用关系随环境梯度变化的趋势。
-# 首先用p<0.001来过滤数据，不考虑rho值
-# 然后合并，保留出现过两次的，然后看两次之间的drho
-# (一个问题,如果出现两次但并不是连续,怎么算drho?目前算drho/dgradient)
-
-# 实现过程：
-# 1、把各edgels用p<0.001或0.05来过滤数据
-# 2、生成各edgels$rho，生成edge列
-# 3、根据edge列merge各edgels$rho
-# 4、drho
-
-# 1、把各edgels用p<0.001或0.05来过滤数据
-# 注意这里的as.data.frame，如果不加，当结果数据只有一行时，会导致变成纵向排列的character
-
-# 2、生成各edgels$rho，生成edge列
-
-# commonedgels <- function(inputedgelsls)
-# {
-# 	templs <- list(NULL)
-# 	for (i in 1:length(inputedgelsls))
-# 	{
-# 		tempdf <- as.data.frame(inputedgelsls[[i]])
-# 		tempdf$taxpair <- paste(tempdf[,"ASV1"],tempdf[,"ASV2"],sep = "-")
-# 		templs[[i]] <- tempdf
-# 	}
-# 	templs
-# }
-
-# commonedgels.intvls.allF.Altitude.ln.p05 <- commonedgels(edgels.intvls.allF.Altitude.ln.p05)
-
-# 3、根据edge列merge各edgels$rho
-
-# 这是没有进行判断的
-# merge.rho <- function(inputedgelsls)
-# {
-# 	tempdf1 <- as.data.frame(inputedgelsls[[1]])
-# 	tempdf1 <- tempdf1[,c("ASV1", "ASV2", "rho")]
-# 	for (i in 2:length(inputedgelsls))
-# 	{
-# 		tempdf2 <- as.data.frame(inputedgelsls[[i]])
-# 		tempdf2 <- tempdf2[,c("ASV1", "ASV2", "rho")]
-# 		tempdf1 <- merge(tempdf1, tempdf2, by = c("ASV1", "ASV2"), all = T)
-# 	}
-# 	tempdf1
-# }
-
-
-
-merge.rho <- function(inputedgelsls)
-{
-	# TFls <- lapply(inputedgelsls, is.data.frame)
-	tempdf1 <- data.frame("ASV1" = NA, "ASV2" = NA, "rho" = NA)
-	for (i in 1:length(inputedgelsls))
-	{
-		# if (TFls[[i]]) #意外发现有的数据是df但却是空的，从而通过上文检测，这里是原写法。
-		if (is.data.frame(inputedgelsls[[i]])&nrow(inputedgelsls[[i]])!=0) #意外发现有的数据是df但却是空的，从而通过上文检测，这里是改进写法，原写法被注释。
-		{
-			tempdf2 <- as.data.frame(inputedgelsls[[i]])
-			tempdf2 <- tempdf2[,c("ASV1", "ASV2", "rho")]
-		}
-		else {tempdf2 <- data.frame("ASV1" = NA, "ASV2" = NA, "rho" = NA)}
-		tempdf1 <- merge(tempdf1, tempdf2, by = c("ASV1", "ASV2"), all = T)
-	}
-	tempdf1 <- tempdf1[,-3] # 去掉初始tempdf1中NA造成的一列NA列，位于第3列
-	tempdf1 <- tempdf1[-dim(tempdf1)[1],] # 去掉初始tempdf1中NA造成的一列NA行，位于最后一行
-	# tempdf1 <- tempdf1[1:(dim(tempdf1)[1]-1),] # 去掉初始tempdf1中NA造成的一列NA行，位于最后一行
-	tempdf1
-}
-
-
-# 4、drho/dgradient
-# 计算drho，按行来逐个判断：
-# 首先判断第一列是否NA，如果NA，则进入下一列
-# 如果不是NA，则记录该值a，记录列值m，然后进入下一列
-# 下一列如果是NA，则进入下一列
-# 下一列如果不是NA，则记录该值b，记录列值n，计算(b-a)/(n-m)，
-
-
-drho <- function(inputmergerho)
-{
-	tempdf <- inputmergerho[,3:(dim(inputmergerho)[2]-1)]
-	tempdrho <- matrix(data=NA, nrow=dim(tempdf)[1], ncol=dim(tempdf)[2])
-	for (i in 1:dim(tempdf)[1])
-	{
-		temprhos <- as.numeric(tempdf[i,])
-		temppos <- which(!is.na(temprhos))
-		for (j in 2:length(temppos))
-		{
-			tempdrho[i, (temppos[j])] <- (temprhos[temppos[j]]-temprhos[temppos[j-1]])/(temppos[j]-temppos[j-1])
-		}
-	}
-	tempdrho
-}
-
-
-
-
-############################################allA windowed
+# see branch "OMP-based-co-occurrence" and "co-occurrence from multiple networks and drho" for functions
 
 library(ShortRead)
 library(Biostrings)
@@ -1167,22 +938,13 @@ library(reshape2)
 library(ggpubr)
 library(grid)
 library(gridExtra)
-
-setwd("C:/Users/Administrator/Nutstore/1/我的坚果云/_ZhJproject-Pamir/0.3Rdata")
-load("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-# intvls.SSalt.ln.allA
-# intvls.TN.ln.allA
-# intvls.pH.ln.allA
-# intvls.PPS.ln.allA
-# intvls.AN.ln.allA
-
 library(doParallel)
 library(parallel)
 library(foreach)
-registerDoParallel(2)
+registerDoParallel(2) # or any core number you can use
 
-# 这里注意intvls.SSalt.ln.allA中有0元素，最好能提前加个if检测一下
+## archaeal dataset
+
 edgels.intvls.SSalt.ln.allA <- list(NULL)
     for (i in 1:length(intvls.SSalt.ln.allA))
 	{
@@ -1227,76 +989,6 @@ edgels.intvls.AN.ln.allA <- list(NULL)
 		else
 		{edgels.intvls.AN.ln.allA[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.AN.ln.allA),"##########", sep = " "))}
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-
-################
-# 计算出各区间的edgels之后，我们希望看到相互作用关系随环境梯度变化的趋势。
-# 首先用p<0.001来过滤数据，不考虑rho值
-# 然后合并，保留出现过两次的，然后看两次之间的drho
-# (一个问题,如果出现两次但并不是连续,怎么算drho?目前算drho/dgradient)
-
-# 实现过程：
-# 1、把各edgels用p<0.001或0.05来过滤数据
-# 2、生成各edgels$rho，生成edge列
-# 3、根据edge列merge各edgels$rho
-# 4、drho
-
-# 1、把各edgels用p<0.001或0.05来过滤数据
-# 注意这里的as.data.frame，如果不加，当结果数据只有一行时，会导致变成纵向排列的character
-
-# intvls.ln
-# p<0.001
-edgels.intvls.SSalt.ln.allA.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.SSalt.ln.allA))
-	{
-		if (!is.numeric(edgels.intvls.SSalt.ln.allA[[i]]))
-		{edgels.intvls.SSalt.ln.allA.p001[[i]] <- as.data.frame(edgels.intvls.SSalt.ln.allA[[i]])[edgels.intvls.SSalt.ln.allA[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.SSalt.ln.allA.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.SSalt.ln.allA.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.TN.ln.allA.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.TN.ln.allA))
-	{
-		if (!is.numeric(edgels.intvls.TN.ln.allA[[i]]))
-		{edgels.intvls.TN.ln.allA.p001[[i]] <- as.data.frame(edgels.intvls.TN.ln.allA[[i]])[edgels.intvls.TN.ln.allA[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.TN.ln.allA.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.TN.ln.allA.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.pH.ln.allA.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.pH.ln.allA))
-	{
-		if (!is.numeric(edgels.intvls.pH.ln.allA[[i]]))
-		{edgels.intvls.pH.ln.allA.p001[[i]] <- as.data.frame(edgels.intvls.pH.ln.allA[[i]])[edgels.intvls.pH.ln.allA[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.pH.ln.allA.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.pH.ln.allA.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.PPS.ln.allA.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.PPS.ln.allA))
-	{
-		if (!is.numeric(edgels.intvls.PPS.ln.allA[[i]]))
-		{edgels.intvls.PPS.ln.allA.p001[[i]] <- as.data.frame(edgels.intvls.PPS.ln.allA[[i]])[edgels.intvls.PPS.ln.allA[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.PPS.ln.allA.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.PPS.ln.allA.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.AN.ln.allA.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.AN.ln.allA))
-	{
-		if (!is.numeric(edgels.intvls.AN.ln.allA[[i]]))
-		{edgels.intvls.AN.ln.allA.p001[[i]] <- as.data.frame(edgels.intvls.AN.ln.allA[[i]])[edgels.intvls.AN.ln.allA[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.AN.ln.allA.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.AN.ln.allA.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
 
 # p<0.05
 edgels.intvls.SSalt.ln.allA.p05 <- list(NULL)
@@ -1349,98 +1041,42 @@ for (i in 1:length(edgels.intvls.AN.ln.allA))
 		colnames(edgels.intvls.AN.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
 
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
 
-# 3、根据edge列merge各edgels$rho
 mergerho.intvls.SSalt.ln.allA.p05 <- merge.rho(edgels.intvls.SSalt.ln.allA.p05)
 mergerho.intvls.TN.ln.allA.p05 <- merge.rho(edgels.intvls.TN.ln.allA.p05)
 mergerho.intvls.pH.ln.allA.p05 <- merge.rho(edgels.intvls.pH.ln.allA.p05)
 mergerho.intvls.PPS.ln.allA.p05 <- merge.rho(edgels.intvls.PPS.ln.allA.p05)
 mergerho.intvls.AN.ln.allA.p05 <- merge.rho(edgels.intvls.AN.ln.allA.p05)
 
-# 计算rho（即NA）出现的次数，过滤掉只出现一次的
+# count times of rho occurred, and remove edges only formed once among all networks (rho.count = 1)
 mergerho.intvls.SSalt.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.SSalt.ln.allA.p05[,3:12]))
 mergerho.intvls.TN.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.TN.ln.allA.p05[,3:12]))
 mergerho.intvls.pH.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.pH.ln.allA.p05[,3:12]))
 mergerho.intvls.PPS.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.PPS.ln.allA.p05[,3:12]))
 mergerho.intvls.AN.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.AN.ln.allA.p05[,3:12]))
 
-
-# 4、drho/dgradient
-
-# intvls.ln
 mergerho.intvls.SSalt.ln.allA.p05.fltr <- mergerho.intvls.SSalt.ln.allA.p05[mergerho.intvls.SSalt.ln.allA.p05[,"rho.count"]>1,]
 mergerho.intvls.TN.ln.allA.p05.fltr <- mergerho.intvls.TN.ln.allA.p05[mergerho.intvls.TN.ln.allA.p05[,"rho.count"]>1,]
 mergerho.intvls.pH.ln.allA.p05.fltr <- mergerho.intvls.pH.ln.allA.p05[mergerho.intvls.pH.ln.allA.p05[,"rho.count"]>1,]
 mergerho.intvls.PPS.ln.allA.p05.fltr <- mergerho.intvls.PPS.ln.allA.p05[mergerho.intvls.PPS.ln.allA.p05[,"rho.count"]>1,]
 mergerho.intvls.AN.ln.allA.p05.fltr <- mergerho.intvls.AN.ln.allA.p05[mergerho.intvls.AN.ln.allA.p05[,"rho.count"]>1,]
 
+# calculate the changes of rho between common edges.
 drho.intvls.SSalt.ln.allA.p05 <- drho(mergerho.intvls.SSalt.ln.allA.p05.fltr)
 drho.intvls.TN.ln.allA.p05 <- drho(mergerho.intvls.TN.ln.allA.p05.fltr)
 drho.intvls.pH.ln.allA.p05 <- drho(mergerho.intvls.pH.ln.allA.p05.fltr)
 drho.intvls.PPS.ln.allA.p05 <- drho(mergerho.intvls.PPS.ln.allA.p05.fltr)
 drho.intvls.AN.ln.allA.p05 <- drho(mergerho.intvls.AN.ln.allA.p05.fltr)
 
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-# 顺便，计算出各网络中，出现次数大于等于5的core 列表
+# target core interactions present in 5 or more networks 
 mergerho.intvls.SSalt.ln.allA.p05.core <- mergerho.intvls.SSalt.ln.allA.p05[mergerho.intvls.SSalt.ln.allA.p05[,"rho.count"]>4,]
 mergerho.intvls.TN.ln.allA.p05.core <- mergerho.intvls.TN.ln.allA.p05[mergerho.intvls.TN.ln.allA.p05[,"rho.count"]>4,]
 mergerho.intvls.pH.ln.allA.p05.core <- mergerho.intvls.pH.ln.allA.p05[mergerho.intvls.pH.ln.allA.p05[,"rho.count"]>4,]
 mergerho.intvls.PPS.ln.allA.p05.core <- mergerho.intvls.PPS.ln.allA.p05[mergerho.intvls.PPS.ln.allA.p05[,"rho.count"]>4,]
 mergerho.intvls.AN.ln.allA.p05.core <- mergerho.intvls.AN.ln.allA.p05[mergerho.intvls.AN.ln.allA.p05[,"rho.count"]>4,]
 
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-################画图
+# ploting
 # intvls.ln
-drho.intvls.NNA.TN.ln.allF.p05 <- melt(drho.intvls.TN.ln.allF.p05)
-colnames(drho.intvls.NNA.TN.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.TN.ln.allF.p05 <- drho.intvls.NNA.TN.ln.allF.p05[!is.na(drho.intvls.NNA.TN.ln.allF.p05$drho),]
-drho.intvls.NNA.TN.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.TN.ln.allF.p05$intvl)
-
-ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x=factor(intvl, level=c("2","3","4","5","6","7","8","9")), y=drho)) + geom_boxplot()
-
-# intvls.ln
-drho.intvls.NNA.SSalt.ln.allA.p05 <- melt(drho.intvls.SSalt.ln.allA.p05)
-colnames(drho.intvls.NNA.SSalt.ln.allA.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.SSalt.ln.allA.p05 <- drho.intvls.NNA.SSalt.ln.allA.p05[!is.na(drho.intvls.NNA.SSalt.ln.allA.p05$drho),]
-drho.intvls.NNA.SSalt.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.SSalt.ln.allA.p05$intvl)
-
-drho.intvls.NNA.TN.ln.allA.p05 <- melt(drho.intvls.TN.ln.allA.p05)
-colnames(drho.intvls.NNA.TN.ln.allA.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.TN.ln.allA.p05 <- drho.intvls.NNA.TN.ln.allA.p05[!is.na(drho.intvls.NNA.TN.ln.allA.p05$drho),]
-drho.intvls.NNA.TN.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.TN.ln.allA.p05$intvl)
-
-drho.intvls.NNA.pH.ln.allA.p05 <- melt(drho.intvls.pH.ln.allA.p05)
-colnames(drho.intvls.NNA.pH.ln.allA.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.pH.ln.allA.p05 <- drho.intvls.NNA.pH.ln.allA.p05[!is.na(drho.intvls.NNA.pH.ln.allA.p05$drho),]
-drho.intvls.NNA.pH.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.pH.ln.allA.p05$intvl)
-
-drho.intvls.NNA.PPS.ln.allA.p05 <- melt(drho.intvls.PPS.ln.allA.p05)
-colnames(drho.intvls.NNA.PPS.ln.allA.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.PPS.ln.allA.p05 <- drho.intvls.NNA.PPS.ln.allA.p05[!is.na(drho.intvls.NNA.PPS.ln.allA.p05$drho),]
-drho.intvls.NNA.PPS.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.PPS.ln.allA.p05$intvl)
-
-drho.intvls.NNA.AN.ln.allA.p05 <- melt(drho.intvls.AN.ln.allA.p05)
-colnames(drho.intvls.NNA.AN.ln.allA.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.AN.ln.allA.p05 <- drho.intvls.NNA.AN.ln.allA.p05[!is.na(drho.intvls.NNA.AN.ln.allA.p05$drho),]
-drho.intvls.NNA.AN.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.AN.ln.allA.p05$intvl)
-
-ggplot(drho.intvls.NNA.SSalt.ln.allA.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.SSalt.ln.allA.p05, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.TN.ln.allA.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.TN.ln.allA.p05, aes(x=factor(intvl, level=c("2","3","4","5","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.pH.ln.allA.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.pH.ln.allA.p05, aes(x=factor(intvl, level=c("3","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.PPS.ln.allA.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.PPS.ln.allA.p05, aes(x=factor(intvl, level=c("2","5","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.AN.ln.allA.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.AN.ln.allA.p05, aes(x=factor(intvl, level=c("2","3","5","6","7","8","10")), y=drho)) + geom_boxplot()
-
-
-
 drho.intvls.NNA.SSalt.ln.allA.p05$intvl <- as.numeric(drho.intvls.NNA.SSalt.ln.allA.p05$intvl)
 ggplot(drho.intvls.NNA.SSalt.ln.allA.p05, aes(x=intvl, y=drho)) +
     geom_point(color = "#002060") + geom_smooth(method="loess", formula=y~x, fill = "#A6CEE3", color = "#1F78B4") + 
@@ -1466,22 +1102,11 @@ ggplot(drho.intvls.NNA.AN.ln.allA.p05, aes(x=intvl, y=drho)) +
     geom_point(color = "#002060") + geom_smooth(method="loess", formula=y~x, fill = "#A6CEE3", color = "#1F78B4") + 
 	theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-
-# "#A6CEE3", "#1F78B4", "#002060"
-# "#FB9A99", "#E31A1C", "#c00000"
-# "#CAB2D6", "#6A3D9A", "#4f216d"
-
-"#A6CEE3", "#1F78B4", "#002060"
-"#FB9A99", "#E31A1C", "#c00000"
-"#CAB2D6", "#6A3D9A", "#4f216d"
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-# 检验是否与0有显著差异
+# t.test difference significance between drhos and 0
 ttest.drho.intvls.SSalt.ln.allA.p05 <- as.data.frame(t.test(drho.intvls.SSalt.ln.allA.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.SSalt.ln.allA.p05))
 {
-	if (sum(!is.na(drho.intvls.SSalt.ln.allA.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.SSalt.ln.allA.p05[,i])) > 1) 
 	{ttest.drho.intvls.SSalt.ln.allA.p05 <- rbind(ttest.drho.intvls.SSalt.ln.allA.p05, as.data.frame(t.test(drho.intvls.SSalt.ln.allA.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.SSalt.ln.allA.p05 <- rbind(ttest.drho.intvls.SSalt.ln.allA.p05, NA)}
@@ -1491,7 +1116,7 @@ rownames(ttest.drho.intvls.SSalt.ln.allA.p05) <- 2:(nrow(ttest.drho.intvls.SSalt
 ttest.drho.intvls.TN.ln.allA.p05 <- as.data.frame(t.test(drho.intvls.TN.ln.allA.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.TN.ln.allA.p05))
 {
-	if (sum(!is.na(drho.intvls.TN.ln.allA.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.TN.ln.allA.p05[,i])) > 1) 
 	{ttest.drho.intvls.TN.ln.allA.p05 <- rbind(ttest.drho.intvls.TN.ln.allA.p05, as.data.frame(t.test(drho.intvls.TN.ln.allA.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.TN.ln.allA.p05 <- rbind(ttest.drho.intvls.TN.ln.allA.p05, NA)}
@@ -1501,7 +1126,7 @@ rownames(ttest.drho.intvls.TN.ln.allA.p05) <- 2:(nrow(ttest.drho.intvls.TN.ln.al
 ttest.drho.intvls.pH.ln.allA.p05 <- as.data.frame(t.test(drho.intvls.pH.ln.allA.p05[,3], mu = 0)[c(2,3,5,6,7)])
 for (i in 4:ncol(drho.intvls.pH.ln.allA.p05))
 {
-	if (sum(!is.na(drho.intvls.pH.ln.allA.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.pH.ln.allA.p05[,i])) > 1) 
 	{ttest.drho.intvls.pH.ln.allA.p05 <- rbind(ttest.drho.intvls.pH.ln.allA.p05, as.data.frame(t.test(drho.intvls.pH.ln.allA.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.pH.ln.allA.p05 <- rbind(ttest.drho.intvls.pH.ln.allA.p05, NA)}
@@ -1511,7 +1136,7 @@ rownames(ttest.drho.intvls.pH.ln.allA.p05) <- 3:(nrow(ttest.drho.intvls.pH.ln.al
 ttest.drho.intvls.PPS.ln.allA.p05 <- as.data.frame(t.test(drho.intvls.PPS.ln.allA.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.PPS.ln.allA.p05))
 {
-	if (sum(!is.na(drho.intvls.PPS.ln.allA.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.PPS.ln.allA.p05[,i])) > 1) 
 	{ttest.drho.intvls.PPS.ln.allA.p05 <- rbind(ttest.drho.intvls.PPS.ln.allA.p05, as.data.frame(t.test(drho.intvls.PPS.ln.allA.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.PPS.ln.allA.p05 <- rbind(ttest.drho.intvls.PPS.ln.allA.p05, NA)}
@@ -1521,7 +1146,7 @@ rownames(ttest.drho.intvls.PPS.ln.allA.p05) <- 2:(nrow(ttest.drho.intvls.PPS.ln.
 ttest.drho.intvls.AN.ln.allA.p05 <- as.data.frame(t.test(drho.intvls.AN.ln.allA.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.AN.ln.allA.p05))
 {
-	if (sum(!is.na(drho.intvls.AN.ln.allA.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.AN.ln.allA.p05[,i])) > 1) 
 	{ttest.drho.intvls.AN.ln.allA.p05 <- rbind(ttest.drho.intvls.AN.ln.allA.p05, as.data.frame(t.test(drho.intvls.AN.ln.allA.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.AN.ln.allA.p05 <- rbind(ttest.drho.intvls.AN.ln.allA.p05, NA)}
@@ -1568,279 +1193,6 @@ ntwprop.edgels.intvls.pH.ln.allA.p05 <- netwk.properties(edgels.intvls.pH.ln.all
 ntwprop.edgels.intvls.PPS.ln.allA.p05 <- netwk.properties(edgels.intvls.PPS.ln.allA.p05)
 ntwprop.edgels.intvls.AN.ln.allA.p05 <- netwk.properties(edgels.intvls.AN.ln.allA.p05)
 
-
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-
-# 计算网络距离和画图
-# 用Schieber et al的方法计算dissimilarity。
-########################    Schieber et al. network dissimilarity
-# https://github.com/tischieber/Quantifying-Network-Structural-Dissimilarities
-
-# 注意，在alpha函数中调用degree的时候会出错，因为igraph和sna包中都有degree函数。
-# 正确的调用应该是igraph包中的，如果错误调用了sna包中的degree，会显示出错信息
-
-
-library(igraph)
-library('Matrix')
-#library('MatrixStats')
-# Shannon entropy
-entropia<-function(a)
-{
-a<-a[which(a>0)];
--sum(a*log(a));
-}
-
-#returns the node distance matrix
-node_distance<-function(g){
-n<-length(V(g))
-if(n==1){
-retorno=1
-}
-if(n>1){
-a<-Matrix(0,nrow=n,ncol=n,sparse=TRUE)
-m<-shortest.paths(g,algorithm=c("unweighted"))
-m[which(m=="Inf")]<-n
-quem<-setdiff(intersect(m,m),0)
-for(j in (1:length(quem))){
-l<-which(m==quem[j])/n
-linhas<-floor(l)+1
-posicoesm1<-which(l==floor(l))
-if(length(posicoesm1)>0){
-linhas[posicoesm1]<-linhas[posicoesm1]-1
-}
-a[1:n,quem[j]]<-hist(linhas,plot=FALSE,breaks=(0:n))$counts
-}
-#m<-c()
-retorno=(a/(n-1))
-}
-return(retorno)
-}
-
-
-# nnd
-nnd<-function(g){
-N<-length(V(g))
-nd<-node_distance(g)
-pdfm<-colMeans(nd)
-norm<-log(max(c(2,length(which(pdfm[1:(N-1)]>0))+1)))
-return(c(pdfm,max(c(0,entropia(pdfm)-entropia(nd)/N))/norm))
-}
-
-#function
-alpha<-function(g){
-N<-length(V(g))
-r<-sort(alpha.centrality(g,exo=igraph::degree(g)/(N-1),alpha=1/N))/((N^2)) # degree有可能和sna::degree相冲突从而报错
-return(c(r,max(c(0,1-sum(r)))))
-}
-
-#function
-D<-function(g,h,w1,w2,w3){
-first<-0
-second<-0
-third<-0
-N<-length(V(g))
-M<-length(V(h))
-PM<-matrix(0,ncol=max(c(M,N)))
-if(w1+w2>0){
-pg=nnd(g)
-PM[1:(N-1)]=pg[1:(N-1)]
-PM[length(PM)]<-pg[N]
-ph=nnd(h)
-PM[1:(M-1)]=PM[1:(M-1)]+ph[1:(M-1)]
-PM[length(PM)]<-PM[length(PM)]+ph[M]
-PM<-PM/2
-first<-sqrt(max(c((entropia(PM)-(entropia(pg[1:N])+entropia(ph[1:M]))/2)/log(2),0)))
-second<-abs(sqrt(pg[N+1])-sqrt(ph[M+1]))
-}
-if(w3>0){
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))/2
-g<-graph.complementer(g)
-h<-graph.complementer(h)
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))/2
-}
-return(w1*first+w2*second+w3*third)
-}
-
-#function
-d<-function(g,h,w1,w2,w3){
-first<-0
-second<-0
-third<-0
-N<-length(V(g))
-M<-length(V(h))
-PM<-matrix(0,ncol=max(c(M,N)))
-if(w1+w2>0){
-pg=nnd(g)
-PM[1:(N-1)]=pg[1:(N-1)]
-PM[length(PM)]<-pg[N]
-ph=nnd(h)
-PM[1:(M-1)]=PM[1:(M-1)]+ph[1:(M-1)]
-PM[length(PM)]<-PM[length(PM)]+ph[M]
-PM<-PM/2
-first<-sqrt(max(c((entropia(PM)-(entropia(pg[1:N])+entropia(ph[1:M]))/2)/log(2),0)))
-second<-abs(sqrt(pg[N+1])-sqrt(ph[M+1]))
-}
-if(w3>0){
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))
-}
-return(w1*first+w2*second+w3*third)
-}
-
-# 1. 之前比较的都是edgelist。所以首先把edgelist变成graph
-
-edgelsls2gls <- function(inputedgelsls)
-	{
-	templslen <- length(inputedgelsls)
-	tempgls <- list(NULL)
-	for (i in 1:templslen)
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			if(nrow((inputedgelsls[[i]])) != 0)
-			{tempgls[[i]] <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]), directed = FALSE)}
-			else
-			{tempgls[[i]] <- NA}
-		}
-		else
-		{tempgls[[i]] <- NA}
-	}
-	tempgls
-	}
-
-# 两两比较，然后放在事先设置好的矩阵的相应位置
-gls2ddf <- function(inputgls)
-	{
-	templslen <- length(inputgls)
-	tempmtr <- matrix(nrow = templslen, ncol = templslen)
-	for (i in templslen:2)
-	{
-		# dvalues2 <- vector(length = 0)
-		for (j in 1:(i-1))
-		{
-			if(all(!is.na(inputgls[[i]])&!is.na(inputgls[[j]])))
-			# if(!is.na(inputgls[[i]])&!is.na(inputgls[[j]]))   # 天知道这里为什么会出现10个TRUE，导致报错
-			{tempmtr[i,j] <- d(inputgls[[i]], inputgls[[j]],0.45,0.45,0.1)}
-			else
-			{tempmtr[i,j] <- NA}
-		}
-		# dvalues <- append(dvalues, dvalues2)
-		print(paste("######", templslen-i+1, "out of", templslen, "######", sep = " "))
-	}
-	tempdf <- as.data.frame(tempmtr)
-	colnames(tempdf) <- names(inputgls);rownames(tempdf) <- names(inputgls)
-	tempdf
-	}
-
-# 画NMDS图
-ddf2NMDSplot <- function(inputddf){
-	temp.ddf.symm <- as.matrix(stats::as.dist(inputddf))
-	# 这里去除有NA的行和列，逻辑是NA行中只有对角线上的0不是NA，所以先计算非NA值，然后去掉非NA值为1的行或列
-	nonNArow <- rowSums(!is.na(temp.ddf.symm))!=1
-	nonNAcol <- colSums(!is.na(temp.ddf.symm))!=1
-	temp.ddf.symm <- temp.ddf.symm[nonNArow,]
-	temp.ddf.symm <- temp.ddf.symm[,nonNAcol]
-	temp.ddf.NMDS <- metaMDS(temp.ddf.symm)
-	temp.ddf.NMDSscore <- as.data.frame(scores(temp.ddf.NMDS))
-	temp.ddf.NMDSscore$intvls <- as.numeric(rownames(temp.ddf.symm))
-
-	tempg <- ggplot(temp.ddf.NMDSscore, aes(x=NMDS1, y=NMDS2, color = intvls)) + 
-		geom_point()
-	tempg
-}
-
-gls.intvls.SSalt.ln.allA.p05 <- edgelsls2gls(edgels.intvls.SSalt.ln.allA.p05)
-gls.intvls.TN.ln.allA.p05 <- edgelsls2gls(edgels.intvls.TN.ln.allA.p05)
-gls.intvls.pH.ln.allA.p05 <- edgelsls2gls(edgels.intvls.pH.ln.allA.p05)
-gls.intvls.PPS.ln.allA.p05 <- edgelsls2gls(edgels.intvls.PPS.ln.allA.p05)
-gls.intvls.AN.ln.allA.p05 <- edgelsls2gls(edgels.intvls.AN.ln.allA.p05)
-
-ddf.intvls.SSalt.ln.allA.p05 <- gls2ddf(gls.intvls.SSalt.ln.allA.p05)
-ddf.intvls.TN.ln.allA.p05 <- gls2ddf(gls.intvls.TN.ln.allA.p05)
-ddf.intvls.pH.ln.allA.p05 <- gls2ddf(gls.intvls.pH.ln.allA.p05)
-ddf.intvls.PPS.ln.allA.p05 <- gls2ddf(gls.intvls.PPS.ln.allA.p05)
-ddf.intvls.AN.ln.allA.p05 <- gls2ddf(gls.intvls.AN.ln.allA.p05)
-
-colnames(ddf.intvls.SSalt.ln.allA.p05) <- 1:ncol(ddf.intvls.SSalt.ln.allA.p05);rownames(ddf.intvls.SSalt.ln.allA.p05) <- 1:nrow(ddf.intvls.SSalt.ln.allA.p05)
-colnames(ddf.intvls.TN.ln.allA.p05) <- 1:ncol(ddf.intvls.TN.ln.allA.p05);rownames(ddf.intvls.TN.ln.allA.p05) <- 1:nrow(ddf.intvls.TN.ln.allA.p05)
-colnames(ddf.intvls.pH.ln.allA.p05) <- 1:ncol(ddf.intvls.pH.ln.allA.p05);rownames(ddf.intvls.pH.ln.allA.p05) <- 1:nrow(ddf.intvls.pH.ln.allA.p05)
-colnames(ddf.intvls.PPS.ln.allA.p05) <- 1:ncol(ddf.intvls.PPS.ln.allA.p05);rownames(ddf.intvls.PPS.ln.allA.p05) <- 1:nrow(ddf.intvls.PPS.ln.allA.p05)
-colnames(ddf.intvls.AN.ln.allA.p05) <- 1:ncol(ddf.intvls.AN.ln.allA.p05);rownames(ddf.intvls.AN.ln.allA.p05) <- 1:nrow(ddf.intvls.AN.ln.allA.p05)
-
-NMDSplot.intvls.SSalt.ln.allA.p05 <- ddf2NMDSplot(ddf.intvls.SSalt.ln.allA.p05)
-NMDSplot.intvls.TN.ln.allA.p05 <- ddf2NMDSplot(ddf.intvls.TN.ln.allA.p05)
-NMDSplot.intvls.pH.ln.allA.p05 <- ddf2NMDSplot(ddf.intvls.pH.ln.allA.p05)
-NMDSplot.intvls.PPS.ln.allA.p05 <- ddf2NMDSplot(ddf.intvls.PPS.ln.allA.p05)
-NMDSplot.intvls.AN.ln.allA.p05 <- ddf2NMDSplot(ddf.intvls.AN.ln.allA.p05)
-
-betadist.intvls.SSalt.ln.allA.p05 <- cbind(melt(ddf.intvls.SSalt.ln.allA.p05),data.frame(rep(1:10,10)))
-betadist.intvls.SSalt.ln.allA.p05$Intvl1 <- as.numeric(betadist.intvls.SSalt.ln.allA.p05[,1])
-betadist.intvls.SSalt.ln.allA.p05$Dist <- abs(betadist.intvls.SSalt.ln.allA.p05[,3]-betadist.intvls.SSalt.ln.allA.p05$Intvl1)
-betadist.intvls.SSalt.ln.allA.p05 <- betadist.intvls.SSalt.ln.allA.p05[!is.na(betadist.intvls.SSalt.ln.allA.p05$value),]
-plot(betadist.intvls.SSalt.ln.allA.p05$Dist,betadist.intvls.SSalt.ln.allA.p05$value)
-
-makeiteazy <- function(inputddf.intvls)
-{
-	temp.betadist <- cbind(melt(inputddf.intvls),data.frame(rep(1:10,10)))
-	temp.betadist$Intvl1 <- as.numeric(temp.betadist[,1])
-	temp.betadist$Dist <- abs(temp.betadist[,3]-temp.betadist$Intvl1)
-	temp.betadist <- temp.betadist[!is.na(temp.betadist$value),]
-	temp.betadist
-}
-
-betadist.intvls.TN.ln.allA.p05 <- makeiteazy(ddf.intvls.TN.ln.allA.p05)
-betadist.intvls.pH.ln.allA.p05 <- makeiteazy(ddf.intvls.pH.ln.allA.p05)
-betadist.intvls.PPS.ln.allA.p05 <- makeiteazy(ddf.intvls.PPS.ln.allA.p05)
-betadist.intvls.AN.ln.allA.p05 <- makeiteazy(ddf.intvls.AN.ln.allA.p05)
-
-plot(betadist.intvls.TN.ln.allA.p05$Dist,betadist.intvls.TN.ln.allA.p05$value)
-plot(betadist.intvls.pH.ln.allA.p05$Dist,betadist.intvls.pH.ln.allA.p05$value)
-plot(betadist.intvls.PPS.ln.allA.p05$Dist,betadist.intvls.PPS.ln.allA.p05$value)
-plot(betadist.intvls.AN.ln.allA.p05$Dist,betadist.intvls.AN.ln.allA.p05$value)
-
-
-# 计算网络rho的分布
-
-mergerho.intvls.SSalt.ln.allA.p05 <- merge.rho(edgels.intvls.SSalt.ln.allA.p05)
-mergerho.intvls.TN.ln.allA.p05 <- merge.rho(edgels.intvls.TN.ln.allA.p05)
-mergerho.intvls.pH.ln.allA.p05 <- merge.rho(edgels.intvls.pH.ln.allA.p05)
-mergerho.intvls.PPS.ln.allA.p05 <- merge.rho(edgels.intvls.PPS.ln.allA.p05)
-mergerho.intvls.AN.ln.allA.p05 <- merge.rho(edgels.intvls.AN.ln.allA.p05)
-
-# 计算rho（即NA）出现的次数，过滤掉只出现一次的
-mergerho.intvls.SSalt.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.SSalt.ln.allA.p05[,3:12]))
-mergerho.intvls.TN.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.TN.ln.allA.p05[,3:12]))
-mergerho.intvls.pH.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.pH.ln.allA.p05[,3:12]))
-mergerho.intvls.PPS.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.PPS.ln.allA.p05[,3:12]))
-mergerho.intvls.AN.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.AN.ln.allA.p05[,3:12]))
-
-colnames(mergerho.intvls.SSalt.ln.allA.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.TN.ln.allA.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.pH.ln.allA.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.PPS.ln.allA.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.AN.ln.allA.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
 
 
 mergerho.intvls2PosNegPercent <- function(inputmergerho){
@@ -1893,112 +1245,15 @@ save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
 
 
 
-####################################TITAN
-# 分两部分
-# 第一部分是原始群落数据
-# 第二部分是群落区间数据
-# 第三部分是rho数据，从merge.rho处开始
-library(TITAN2)
-
-# 第一部分是原始群落数据
-ps.SSalt.ln.allA
-ps.TN.ln.allA
-ps.pH.ln.allA
-ps.PPS.ln.allA
-ps.AN.ln.allA
-
-# taxa的frequency最小值是3，需要去除少于3的那些。
-ps.min3.SSalt.ln.allA <- prune_taxa(colSums(otu_table(ps.SSalt.ln.allA) != 0) > 2, ps.SSalt.ln.allA) # colSums计算的是otu_table(ps.SSalt.ln.allA) != 0中True的数量，大于2时，满足minFre为3的要求
-ps.min3.TN.ln.allA <- prune_taxa(colSums(otu_table(ps.TN.ln.allA) != 0) > 2, ps.TN.ln.allA)
-ps.min3.pH.ln.allA <- prune_taxa(colSums(otu_table(ps.pH.ln.allA) != 0) > 2, ps.pH.ln.allA)
-ps.min3.PPS.ln.allA <- prune_taxa(colSums(otu_table(ps.PPS.ln.allA) != 0) > 2, ps.PPS.ln.allA)
-ps.min3.AN.ln.allA <- prune_taxa(colSums(otu_table(ps.AN.ln.allA) != 0) > 2, ps.AN.ln.allA)
-
-df.min3.SSalt.ln.allA <- as.data.frame(as(otu_table(ps.min3.SSalt.ln.allA),"matrix")); colnames(df.min3.SSalt.ln.allA) <- tax_table(ps.min3.SSalt.ln.allA)[,7]
-colnames(df.min3.SSalt.ln.allA) <- gsub("_", " ", colnames(df.min3.SSalt.ln.allA))
-df.min3.TN.ln.allA <- as.data.frame(as(otu_table(ps.min3.TN.ln.allA),"matrix")); colnames(df.min3.TN.ln.allA) <- tax_table(ps.min3.TN.ln.allA)[,7]
-colnames(df.min3.TN.ln.allA) <- gsub("_", " ", colnames(df.min3.TN.ln.allA))
-df.min3.pH.ln.allA <- as.data.frame(as(otu_table(ps.min3.pH.ln.allA),"matrix")); colnames(df.min3.pH.ln.allA) <- tax_table(ps.min3.pH.ln.allA)[,7]
-colnames(df.min3.pH.ln.allA) <- gsub("_", " ", colnames(df.min3.pH.ln.allA))
-df.min3.PPS.ln.allA <- as.data.frame(as(otu_table(ps.min3.PPS.ln.allA),"matrix")); colnames(df.min3.PPS.ln.allA) <- tax_table(ps.min3.PPS.ln.allA)[,7]
-colnames(df.min3.PPS.ln.allA) <- gsub("_", " ", colnames(df.min3.PPS.ln.allA))
-df.min3.AN.ln.allA <- as.data.frame(as(otu_table(ps.min3.AN.ln.allA),"matrix")); colnames(df.min3.AN.ln.allA) <- tax_table(ps.min3.AN.ln.allA)[,7]
-colnames(df.min3.AN.ln.allA) <- gsub("_", " ", colnames(df.min3.AN.ln.allA))
-
-titan.SSalt.ln.allA <- titan(sample_data(ps.min3.SSalt.ln.allA), df.min3.SSalt.ln.allA)
-titan.TN.ln.allA <- titan(sample_data(ps.min3.TN.ln.allA), df.min3.TN.ln.allA)
-titan.pH.ln.allA <- titan(sample_data(ps.min3.pH.ln.allA), df.min3.pH.ln.allA)
-titan.PPS.ln.allA <- titan(sample_data(ps.min3.PPS.ln.allA), df.min3.PPS.ln.allA)
-titan.AN.ln.allA <- titan(sample_data(ps.min3.AN.ln.allA), df.min3.AN.ln.allA)
-
-plot_taxa_ridges(titan.SSalt.ln.allA, xlab = "Soluble salt")
-# There are 87 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 22
-# Number of Increasers = 65
-plot_taxa_ridges(titan.TN.ln.allA, xlab = "Total nitrogen")
-# There are 47 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 14
-# Number of Increasers = 33
-plot_taxa_ridges(titan.pH.ln.allA, xlab = "pH")
-# There are 37 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 9
-# Number of Increasers = 28
-plot_taxa_ridges(titan.PPS.ln.allA, xlab = "Precipitation seasonality")
-# There are 37 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 25
-# Number of Increasers = 12
-plot_taxa_ridges(titan.AN.ln.allA, xlab = "Available nitrogen")
-# There are 17 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 11
-# Number of Increasers = 6
 
 
 
-plot_sumz(titan.SSalt.ln.allA, filter = TRUE)
-plot_sumz(titan.TN.ln.allA, filter = TRUE)
-plot_sumz(titan.pH.ln.allA, filter = TRUE)
-plot_sumz(titan.PPS.ln.allA, filter = TRUE)
-plot_sumz(titan.AN.ln.allA, filter = TRUE)
 
-# 从TITAN结果中抽提出分类单元
 
-    # sppmax <- titan.out %>% pluck("sppmax") %>% tibble::as_tibble() %>% 
-    #     mutate(id = row.names(titan.out$sppmax))
-    # sppmax$filter <- 0
-    # pure_and_reliable_ndcs <- with(sppmax, which(purity >= pur.cut & 
-    #     reliability >= rel.cut))
-    # sppmax$filter[pure_and_reliable_ndcs] <- sppmax$maxgrp[pure_and_reliable_ndcs]
-    # num.dcr <- sum(sppmax$filter == 1L)
-    # num.ncr <- sum(sppmax$filter == 2L)
-    # message(glue("There are {sum(num.dcr, num.ncr)} indicator taxa of {n_ytaxa} possible for plotting"))
-    # message(glue("Number of Decreasers = {num.dcr}"))
-    # message(glue("Number of Increasers = {num.ncr}"))
 
-library(purrr)
-sppmax.SSalt.ln.allA <- titan.SSalt.ln.allA %>% pluck("sppmax") %>% tibble::as_tibble() %>% mutate(id = row.names(titan.SSalt.ln.allA$sppmax))
-sppmax.SSalt.ln.allA$filter <- 0
-pure_and_reliable_ndcs.SSalt.ln.allA <- with(sppmax.SSalt.ln.allA$filter <- 0, which(sppmax.SSalt.ln.allA$purity >= titan.SSalt.ln.allA$arguments[[7]] & sppmax.SSalt.ln.allA$reliability >= titan.SSalt.ln.allA$arguments[[8]]))
-View(sppmax.SSalt.ln.allA[pure_and_reliable_ndcs.SSalt.ln.allA,])
-# pure_and_reliable_ndcs中得到的数字，是sppmax中可信结果的编号，使用sppmax.SSalt.ln.allA[pure_and_reliable_ndcs.SSalt.ln.allA,]即可得到所需列表
-# 列表中maxgrp中1代表decr，2代表incr
 
-TITAN.extract <- function(inputTITAN.out)
-{
-	library(purrr)
-	temp.sppmax <- as.data.frame(pluck(inputTITAN.out, "sppmax"))
-	temp.sppmax$id <- rownames(temp.sppmax)
-	temp.sppmax$filter <- 0
-	temp.extract <- temp.sppmax[temp.sppmax$purity >= inputTITAN.out$arguments[[7]] & temp.sppmax$reliability >= inputTITAN.out$arguments[[8]],]
-	temp.extract
-}
 
-TITANextr.SSalt.ln.allA <- TITAN.extract(titan.SSalt.ln.allA)
-TITANextr.TN.ln.allA <- TITAN.extract(titan.TN.ln.allA)
-TITANextr.pH.ln.allA <- TITAN.extract(titan.pH.ln.allA)
-TITANextr.PPS.ln.allA <- TITAN.extract(titan.PPS.ln.allA)
-TITANextr.AN.ln.allA <- TITAN.extract(titan.AN.ln.allA)
 
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
 
 
 # 第二部分是群落区间数据
