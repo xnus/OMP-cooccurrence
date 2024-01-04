@@ -1,6 +1,6 @@
 
 # Generate list of real local communitis
-# Not that the factor in the function is "location". Change it to the factor you want.
+# Note that the factor in the function is "location". Change it to the factor you want.
 
 ps2sitepsls <- function(inputps)
 {
