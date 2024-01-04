@@ -49,8 +49,9 @@ map.sites <- get_map(location = map.bbox, maptype = "stamen_terrain", source = "
 ggmap(map.sites) + 
 	geom_point(data = map.info, mapping = aes(x = Longitude, y = Latitude), color = "red", size = 2) +
 
-
-###################### stacked bar plots of top 12 abundant classes
+##########################################################################################
+###################### stacked bar plots of top 12 abundant classes ######################
+##########################################################################################
 
 # sites arranged due to altitudes
 sitesHL <- c("Ulug", "SbsSun", "SbsShade", "Kulma", "Muztagata", "SBDLake", "KongT", "SbsBrdg7", "SbsBrdg8", "BulLake", "Gez1", "Gez2", "AktShade", "AktSun", "OytGlaShade", "OytGlaSun", "OytBrdg1")
@@ -558,9 +559,7 @@ node.property <- function(inputedgelsls)
 			temp.nprpls[[i]] <- tempdf
 		}
 		else 
-		{
-			temp.nprpls[[i]] <- NA
-		}
+		{temp.nprpls[[i]] <- NA}
 	}
 	temp.nprpls
 }
