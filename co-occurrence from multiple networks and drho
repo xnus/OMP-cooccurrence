@@ -1,0 +1,84 @@
+library(ShortRead)
+library(Biostrings)
+library(phyloseq)
+library(vegan)
+library(ecodist)
+library(igraph)
+library(ggplot2)
+library(bipartite)
+
+library(doParallel)
+library(parallel)
+library(foreach)
+
+
+# starts from intvls.SSalt.ln.allA, calculated from function ps2ls.interval, see branch "environmental intervals"
+
+edgels.intvls.SSalt.ln.allA <- list(NULL)
+    for (i in 1:length(intvls.SSalt.ln.allA))
+	{
+		if (!is.atomic(intvls.SSalt.ln.allA[[i]]))
+		{edgels.intvls.SSalt.ln.allA[[i]] <- ps2edgels.bi(intvls.SSalt.ln.allA[[i]])}
+		else
+		{edgels.intvls.SSalt.ln.allA[[i]] <- 0}
+	print(paste("##########",i, "out of", length(intvls.SSalt.ln.allA),"##########", sep = " "))}
+
+# filter edges with p<0.05, regardless of |rho|
+edgels.intvls.SSalt.ln.allA.p05 <- list(NULL)
+for (i in 1:length(edgels.intvls.SSalt.ln.allA))
+	{
+		if (!is.numeric(edgels.intvls.SSalt.ln.allA[[i]]))
+		{edgels.intvls.SSalt.ln.allA.p05[[i]] <- as.data.frame(edgels.intvls.SSalt.ln.allA[[i]])[edgels.intvls.SSalt.ln.allA[[i]][,"p.value"]<0.05,]}
+		else
+		{edgels.intvls.SSalt.ln.allA.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
+		colnames(edgels.intvls.SSalt.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
+	}
+
+# merge the rho values of each edge from a list of multiple edge lists.  
+merge.rho <- function(inputedgelsls)
+{
+	tempdf1 <- data.frame("ASV1" = NA, "ASV2" = NA, "rho" = NA)
+	for (i in 1:length(inputedgelsls))
+	{
+		if (is.data.frame(inputedgelsls[[i]])&nrow(inputedgelsls[[i]])!=0) # check for empty df before proceeding.
+		{
+			tempdf2 <- as.data.frame(inputedgelsls[[i]])
+			tempdf2 <- tempdf2[,c("ASV1", "ASV2", "rho")]
+		}
+		else {tempdf2 <- data.frame("ASV1" = NA, "ASV2" = NA, "rho" = NA)}
+		tempdf1 <- merge(tempdf1, tempdf2, by = c("ASV1", "ASV2"), all = T)
+	}
+	tempdf1 <- tempdf1[,-3] # remove the NA column from orgininal tempdf1, at column 3
+	tempdf1 <- tempdf1[-dim(tempdf1)[1],] # remove the NA column from orgininal tempdf1, at the last column
+	# tempdf1 <- tempdf1[1:(dim(tempdf1)[1]-1),] # remove the NA column from orgininal tempdf1, at the last column
+	tempdf1
+}
+
+# calculate the change of rhos, from the mergerho.
+drho <- function(inputmergerho)
+{
+	tempdf <- inputmergerho[,3:(dim(inputmergerho)[2]-1)]
+	tempdrho <- matrix(data=NA, nrow=dim(tempdf)[1], ncol=dim(tempdf)[2])
+	for (i in 1:dim(tempdf)[1])
+	{
+		temprhos <- as.numeric(tempdf[i,])
+		temppos <- which(!is.na(temprhos))
+		for (j in 2:length(temppos))
+		{
+			tempdrho[i, (temppos[j])] <- (temprhos[temppos[j]]-temprhos[temppos[j-1]])/(temppos[j]-temppos[j-1])
+		}
+	}
+	tempdrho
+}
+
+
+# examples:
+mergerho.intvls.SSalt.ln.allA.p05 <- merge.rho(edgels.intvls.SSalt.ln.allA.p05)
+# count times of rho occurred, and remove edges (rho.count = 1)
+mergerho.intvls.SSalt.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.SSalt.ln.allA.p05[,3:12]))
+mergerho.intvls.SSalt.ln.allA.p05.fltr <- mergerho.intvls.SSalt.ln.allA.p05[mergerho.intvls.SSalt.ln.allA.p05[,"rho.count"]>1,]
+
+
+# 4、drho/dgradient
+
+# intvls.ln
