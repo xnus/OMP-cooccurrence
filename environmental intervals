@@ -1,0 +1,73 @@
+
+#caculate the upper and bottom boundaries of intervals, with the maximum and minimum of environmental factor, the no. of intervals wanted, and the overlaping area between intervals.
+F.intervals <- function(inputmin, inputmax, inputn, inputoverlap)
+{
+    F.range <- inputmax - inputmin
+    temp.x <- F.range/(inputn+inputoverlap-inputn*inputoverlap)
+    results<-matrix(nrow=0,ncol=2)
+    for (i in 1:inputn)
+    {
+        temp.left <- (i-1)*(1-inputoverlap)*temp.x
+        temp.right <- (i+inputoverlap-i*inputoverlap)*temp.x
+        new.row<-c(inputmin+temp.left, inputmin+temp.right)
+        results<-rbind(results,new.row)
+    }
+	results <- as.data.frame(results)
+	colnames(results)<-c("LeftBound","RightBound")
+	results
+}
+
+# subset ps with the given dividing strategy.
+subsetps.interval <- function(inputps, inputenvfactor, inputleft, inputright)
+	{
+    outputps <- prune_samples(as.logical(sample_data(inputps)[,inputenvfactor]>=inputleft&sample_data(inputps)[,inputenvfactor]<=inputright), inputps) 
+    outputps <- prune_taxa(taxa_sums(outputps) > 0, outputps)
+	outputps
+    }
+
+# generate the list of ps objects with the given dividing strategy.
+ps2ls.interval <- function(inputps, inputenvfactor, inputn, inputoverlap)
+{
+	F.min <- min(sample_data(inputps)[,inputenvfactor])
+    F.max <- max(sample_data(inputps)[,inputenvfactor])
+    temp.intervals <- F.intervals(F.min, F.max, inputn, inputoverlap)
+    temp.subpsls <- list(NULL)
+    for (j in 1:inputn)
+    {
+    # must test whether sample_data have values within intervals, otherwise prune_sample would get error.
+    # use function "any", to test whether there is any factor belong to certain interval.
+    # an inverse function is "all".
+    if (any(sample_data(inputps)[,inputenvfactor]>=temp.intervals[j,1]&sample_data(inputps)[,inputenvfactor]<=temp.intervals[j,2]))
+        {
+        temp.subps <- subsetps.interval(inputps, inputenvfactor, temp.intervals[j,1], temp.intervals[j,2])
+        }
+    else
+        {
+        # set false case to 0, and will be distinguished with is.atomic later
+        temp.subps <- 0
+        }
+        temp.subpsls[[j]] <- temp.subps
+    }
+    temp.subpsls
+}
+
+# output the no. of taxa and replicates of each intervals, with the given dividing strategy.
+test.interval <- function(inputps, inputenvfactor, inputn, inputoverlap)
+{
+	templs <- ps2ls.interval(inputps, inputenvfactor, inputn, inputoverlap)
+	tempdf <- t(dim(otu_table(templs[[1]])))
+	for (i in 2:inputn)
+	{
+		# if (templs[[i]] == 0)
+		if (!is.atomic(templs[[i]]))
+		{tempdf <- rbind(tempdf, t(dim(otu_table(templs[[i]]))))}
+		else
+		{tempdf <- rbind(tempdf, c(0,0))}
+	}
+	tempdf
+}
+
+# examples
+test.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
+ps.SSalt.ln.allA <- phyloseq(otu_table(ps.allA), sample_data(cbind(sample_data(ps.allA)[,"Location"], log(sample_data(ps.allA)[,"SSalt"], exp(1)))), tax_table(ps.allA))
+intvls.SSalt.ln.allA <- ps2ls.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
