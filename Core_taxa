@@ -155,7 +155,7 @@ counttaxdfls <- function(inputpslsls, inputtaxlv)
 	temptaxdfls
 }
 
-# 然后根据各frequency阈值，分别确定真实群落和模拟群落的coretaxls，然后比较
+# determine coretaxls from real sub-communities and simulated sub-communities at each threshold of frequency, then compare both coretaxls
 taxdfls2Coretaxls <- function(inputtaxdfls)
 {
 	Nthres <- length(inputtaxdfls)
@@ -213,7 +213,7 @@ compareCoreRA <- function(inputoverallps, inputCoretaxls1, inputCoretaxls2)
         tempCoreRA <- data.frame(NULL)
         for (i in 1:tempN)
         {
-            # 这里判断输入Coretaxls的df是否为0行数据，是的话说明该阈值下不存在Coretax，直接等于0
+            # if df of inputed Coretaxls is data of 0 rows, no Coretax at this threshold and feedback with 0
             if(dim(inputCoretaxls1[[i]])[1]==0) 
             {
                 tempCoreRA1 = 0
@@ -254,7 +254,7 @@ compareCoreRA <- function(inputoverallps, inputCoretaxls1, inputCoretaxls2)
         tempCoreRA <- data.frame(NULL)
         for (i in 1:tempN)
         {
-            # 这里判断输入Coretaxls的df是否为0行数据，是的话说明该阈值下不存在Coretax，直接等于0
+            # if df of inputed Coretaxls is data of 0 rows, no Coretax at this threshold and feedback with 0
             if(dim(inputCoretaxls1[[i]])[1]==0) 
             {
                 tempCoreRA1 = 0
@@ -322,3 +322,28 @@ plotCoreDataCombine <- function(inputCoreDataCombine, inputcol1, inputcol2)
     lines(1:100, inputCoreDataCombine$Consistence, lwd = 2, lty = 1, col = "darkgray", type = c("l"))
     axis(side = 4, at = pretty(range(inputCoreDataCombine$RACore1)))      # Add second axis
 }
+
+
+# examples:
+# ps.allA: a phyloseq objects of community data from different locations
+# subset local communities (real sub-communities) delimited by locations, and save them in a list object
+sitepsls.allA <- ps2sitepsls(ps.allA)
+# caculate core set at frequecies = 0, 1,...,99,100, with minimal RA = 0.
+TierNCorepslsls.allA.0.100 <- psls2TierNCorepslsls(sitepsls.allA,0,100)
+taxdfls.TierNCorepslsls.allA.0.100 <- counttaxdfls(TierNCorepslsls.allA.0.100, "Species")
+Coretaxls.TierNCorepslsls.allA.0.100 <- taxdfls2Coretaxls(taxdfls.TierNCorepslsls.allA.0.100)
+
+# generate 100 simulated sub-communities, each included 5 replicates.
+replist.ps.allA.N5.S100 <- mkreplist(ps.allA, 5, 100)
+TierNCorepslsls.allA.N5.S100.0.100 <- psls2TierNCorepslsls(replist.ps.allA.N5.S100,0,100)
+taxdfls.TierNCorepslsls.allA.N5.S100.0.100 <- counttaxdfls(TierNCorepslsls.allA.N5.S100.0.100, "Species")
+Coretaxls.TierNCorepslsls.allA.N5.S100.0.100 <- taxdfls2Coretaxls(taxdfls.TierNCorepslsls.allA.N5.S100.0.100)
+
+# caculate the summed RA of core sets of real and simulated sub-communities. 
+compareCoreRA.TierNCorepslsls.allA.0.100 <- compareCoreRA(ps.allA, Coretaxls.TierNCorepslsls.allA.0.100, Coretaxls.TierNCorepslsls.allA.N5.S100.0.100)
+# caculate Jaccard index of core taxa sets between real and simulated sub-communities. 
+compareCoretaxls.TierNCorepslsls.allA.0.100 <- compareCoretaxls(Coretaxls.TierNCorepslsls.allA.0.100, Coretaxls.TierNCorepslsls.allA.N5.S100.0.100)
+
+# combine data and plot
+CoreDataCombine.TierNCorepslsls.allA.0.100 <- cbind(compareCoretaxls.TierNCorepslsls.allA.0.100, compareCoreRA.TierNCorepslsls.allA.0.100)
+plotCoreDataCombine(CoreDataCombine.TierNCorepslsls.allA.0.100, "#1F78B4", "#A6CEE3")
