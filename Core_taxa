@@ -1,5 +1,5 @@
 
-# Generate list of real local communitis
+# function ps2sitepsls generates list of real local communitis
 # Note that the factor in the function is "location". Change it to the factor you want.
 
 ps2sitepsls <- function(inputps)
@@ -15,18 +15,7 @@ ps2sitepsls <- function(inputps)
 	temp.sitepsls
 }
 
-ps2TierNCorepsls <- function(inputps, inputRAthres, inputN)
-{
-	k <- as.integer(100/inputN)
-	temp.TierNCorepsls <- list(NULL)
-	for (i in 1:inputN)
-	{
-		temp.TierNCore.ps <- ps2TierNCore.better(inputps, i*k/100, inputRAthres)
-		temp.TierNCorepsls[[i]] <- temp.TierNCore.ps
-		print(paste(i, "out of", inputN, sep = " "))
-	}
-	temp.TierNCorepsls
-}
+
 
 # Calculate core taxon set at thresholds of inputfreqthres and inputRAthres
 ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
@@ -58,6 +47,23 @@ ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
 		tempps
 		}
 	}
+
+# function ps2TierNCorepsls identify the TierN core taxa with a phyloseq object.
+# inputRAthres: the threshold of 
+# inputN: how 
+ps2TierNCorepsls <- function(inputps, inputRAthres, inputN)
+{
+	k <- as.integer(100/inputN)
+	temp.TierNCorepsls <- list(NULL)
+	for (i in 1:inputN)
+	{
+		temp.TierNCore.ps <- ps2TierNCore.better(inputps, i*k/100, inputRAthres)
+		temp.TierNCorepsls[[i]] <- temp.TierNCore.ps
+		print(paste(i, "out of", inputN, sep = " "))
+	}
+	temp.TierNCorepsls
+}
+
 
 psls2TierNCorepslsls <- function(inputpsls, inputRAthres, inputN)
 {
