@@ -11,7 +11,7 @@ library(parallel)
 library(foreach)
 
 
-# 用cor.test计算网络的基本函数，得到一个edge的list
+# Input dataframe of community data, target the abundance data of co-exsited taxon pairs, then calculate edge properties with cor.test
 df2edge.bi.mod <- function(inputdf) 
 	{
 	results<-matrix(nrow=0,ncol=6)
@@ -52,7 +52,7 @@ df2edge.bi.mod <- function(inputdf)
 	results
 	}
 
-# 限定rho和p值来筛选df2edge得到的edge list
+# set rho and p thresholds to filter edge list 
 edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
 	{
 	edgelstemp <- base::transform(inputedgelst, p.value = as.numeric(as.character(p.value)), rho = as.numeric(as.character(rho))) # 如果不加as.character，会变成莫名其妙的整数
