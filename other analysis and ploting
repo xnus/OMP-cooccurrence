@@ -1195,6 +1195,31 @@ mergerho.intvls.AN.ln.allA.p05.core <- mergerho.intvls.AN.ln.allA.p05[mergerho.i
 
 # ploting
 # intvls.ln
+drho.intvls.NNA.SSalt.ln.allA.p05 <- melt(drho.intvls.SSalt.ln.allA.p05)
+colnames(drho.intvls.NNA.SSalt.ln.allA.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.SSalt.ln.allA.p05 <- drho.intvls.NNA.SSalt.ln.allA.p05[!is.na(drho.intvls.NNA.SSalt.ln.allA.p05$drho),]
+drho.intvls.NNA.SSalt.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.SSalt.ln.allA.p05$intvl)
+
+drho.intvls.NNA.TN.ln.allA.p05 <- melt(drho.intvls.TN.ln.allA.p05)
+colnames(drho.intvls.NNA.TN.ln.allA.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.TN.ln.allA.p05 <- drho.intvls.NNA.TN.ln.allA.p05[!is.na(drho.intvls.NNA.TN.ln.allA.p05$drho),]
+drho.intvls.NNA.TN.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.TN.ln.allA.p05$intvl)
+
+drho.intvls.NNA.pH.ln.allA.p05 <- melt(drho.intvls.pH.ln.allA.p05)
+colnames(drho.intvls.NNA.pH.ln.allA.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.pH.ln.allA.p05 <- drho.intvls.NNA.pH.ln.allA.p05[!is.na(drho.intvls.NNA.pH.ln.allA.p05$drho),]
+drho.intvls.NNA.pH.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.pH.ln.allA.p05$intvl)
+
+drho.intvls.NNA.PPS.ln.allA.p05 <- melt(drho.intvls.PPS.ln.allA.p05)
+colnames(drho.intvls.NNA.PPS.ln.allA.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.PPS.ln.allA.p05 <- drho.intvls.NNA.PPS.ln.allA.p05[!is.na(drho.intvls.NNA.PPS.ln.allA.p05$drho),]
+drho.intvls.NNA.PPS.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.PPS.ln.allA.p05$intvl)
+
+drho.intvls.NNA.AN.ln.allA.p05 <- melt(drho.intvls.AN.ln.allA.p05)
+colnames(drho.intvls.NNA.AN.ln.allA.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.AN.ln.allA.p05 <- drho.intvls.NNA.AN.ln.allA.p05[!is.na(drho.intvls.NNA.AN.ln.allA.p05$drho),]
+drho.intvls.NNA.AN.ln.allA.p05$intvl <- as.character(drho.intvls.NNA.AN.ln.allA.p05$intvl)
+
 drho.intvls.NNA.SSalt.ln.allA.p05$intvl <- as.numeric(drho.intvls.NNA.SSalt.ln.allA.p05$intvl)
 ggplot(drho.intvls.NNA.SSalt.ln.allA.p05, aes(x=intvl, y=drho)) +
     geom_point(color = "#002060") + geom_smooth(method="loess", formula=y~x, fill = "#A6CEE3", color = "#1F78B4") + 
@@ -1366,6 +1391,16 @@ mergerho.intvls.PPS.ln.allB.p05.core <- mergerho.intvls.PPS.ln.allB.p05[mergerho
 mergerho.intvls.Moisture.ln.allB.p05.core <- mergerho.intvls.Moisture.ln.allB.p05[mergerho.intvls.Moisture.ln.allB.p05[,"rho.count"]>3,]
 
 # ploting
+drho.intvls.NNA.PPS.ln.allB.p05 <- melt(drho.intvls.PPS.ln.allB.p05)
+colnames(drho.intvls.NNA.PPS.ln.allB.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.PPS.ln.allB.p05 <- drho.intvls.NNA.PPS.ln.allB.p05[!is.na(drho.intvls.NNA.PPS.ln.allB.p05$drho),]
+drho.intvls.NNA.PPS.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.PPS.ln.allB.p05$intvl)
+
+drho.intvls.NNA.Moisture.ln.allB.p05 <- melt(drho.intvls.Moisture.ln.allB.p05)
+colnames(drho.intvls.NNA.Moisture.ln.allB.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.Moisture.ln.allB.p05 <- drho.intvls.NNA.Moisture.ln.allB.p05[!is.na(drho.intvls.NNA.Moisture.ln.allB.p05$drho),]
+drho.intvls.NNA.Moisture.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.Moisture.ln.allB.p05$intvl)
+
 drho.intvls.NNA.PPS.ln.allB.p05$intvl <- as.numeric(drho.intvls.NNA.PPS.ln.allB.p05$intvl)
 ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#c00000") + geom_smooth(method="loess", formula=y~x, fill = "#FB9A99", color = "#E31A1C") + 
@@ -1380,7 +1415,7 @@ ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x=intvl, y=drho)) +
 ttest.drho.intvls.PPS.ln.allB.p05 <- as.data.frame(t.test(drho.intvls.PPS.ln.allB.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.PPS.ln.allB.p05))
 {
-	if (sum(!is.na(drho.intvls.PPS.ln.allB.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.PPS.ln.allB.p05[,i])) > 1)
 	{ttest.drho.intvls.PPS.ln.allB.p05 <- rbind(ttest.drho.intvls.PPS.ln.allB.p05, as.data.frame(t.test(drho.intvls.PPS.ln.allB.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.PPS.ln.allB.p05 <- rbind(ttest.drho.intvls.PPS.ln.allB.p05, NA)}
@@ -1390,7 +1425,7 @@ rownames(ttest.drho.intvls.PPS.ln.allB.p05) <- 2:(nrow(ttest.drho.intvls.PPS.ln.
 ttest.drho.intvls.Moisture.ln.allB.p05 <- as.data.frame(t.test(drho.intvls.Moisture.ln.allB.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.Moisture.ln.allB.p05))
 {
-	if (sum(!is.na(drho.intvls.Moisture.ln.allB.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.Moisture.ln.allB.p05[,i])) > 1) 
 	{ttest.drho.intvls.Moisture.ln.allB.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allB.p05, as.data.frame(t.test(drho.intvls.Moisture.ln.allB.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.Moisture.ln.allB.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allB.p05, NA)}
@@ -1525,6 +1560,31 @@ mergerho.intvls.AN.ln.allF.p05.core <- mergerho.intvls.AN.ln.allF.p05[mergerho.i
 
 # ploting
 # intvls.ln
+drho.intvls.NNA.TN.ln.allF.p05 <- melt(drho.intvls.TN.ln.allF.p05)
+colnames(drho.intvls.NNA.TN.ln.allF.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.TN.ln.allF.p05 <- drho.intvls.NNA.TN.ln.allF.p05[!is.na(drho.intvls.NNA.TN.ln.allF.p05$drho),]
+drho.intvls.NNA.TN.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.TN.ln.allF.p05$intvl)
+
+drho.intvls.NNA.Moisture.ln.allF.p05 <- melt(drho.intvls.Moisture.ln.allF.p05)
+colnames(drho.intvls.NNA.Moisture.ln.allF.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.Moisture.ln.allF.p05 <- drho.intvls.NNA.Moisture.ln.allF.p05[!is.na(drho.intvls.NNA.Moisture.ln.allF.p05$drho),]
+drho.intvls.NNA.Moisture.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.Moisture.ln.allF.p05$intvl)
+
+drho.intvls.NNA.TOM.ln.allF.p05 <- melt(drho.intvls.TOM.ln.allF.p05)
+colnames(drho.intvls.NNA.TOM.ln.allF.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.TOM.ln.allF.p05 <- drho.intvls.NNA.TOM.ln.allF.p05[!is.na(drho.intvls.NNA.TOM.ln.allF.p05$drho),]
+drho.intvls.NNA.TOM.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.TOM.ln.allF.p05$intvl)
+
+drho.intvls.NNA.SSalt.ln.allF.p05 <- melt(drho.intvls.SSalt.ln.allF.p05)
+colnames(drho.intvls.NNA.SSalt.ln.allF.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.SSalt.ln.allF.p05 <- drho.intvls.NNA.SSalt.ln.allF.p05[!is.na(drho.intvls.NNA.SSalt.ln.allF.p05$drho),]
+drho.intvls.NNA.SSalt.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.SSalt.ln.allF.p05$intvl)
+
+drho.intvls.NNA.AN.ln.allF.p05 <- melt(drho.intvls.AN.ln.allF.p05)
+colnames(drho.intvls.NNA.AN.ln.allF.p05) <- c("trivial","intvl","drho")
+drho.intvls.NNA.AN.ln.allF.p05 <- drho.intvls.NNA.AN.ln.allF.p05[!is.na(drho.intvls.NNA.AN.ln.allF.p05$drho),]
+drho.intvls.NNA.AN.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.AN.ln.allF.p05$intvl)
+
 drho.intvls.NNA.TN.ln.allF.p05$intvl <- as.numeric(drho.intvls.NNA.TN.ln.allF.p05$intvl)
 ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#4f216d") + geom_smooth(method="loess", formula=y~x, fill = "#CAB2D6", color = "#6A3D9A") + 
@@ -1554,7 +1614,7 @@ ggplot(drho.intvls.NNA.AN.ln.allF.p05, aes(x=intvl, y=drho)) +
 ttest.drho.intvls.TN.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.TN.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.TN.ln.allF.p05))
 {
-	if (sum(!is.na(drho.intvls.TN.ln.allF.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.TN.ln.allF.p05[,i])) > 1)
 	{ttest.drho.intvls.TN.ln.allF.p05 <- rbind(ttest.drho.intvls.TN.ln.allF.p05, as.data.frame(t.test(drho.intvls.TN.ln.allF.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.TN.ln.allF.p05 <- rbind(ttest.drho.intvls.TN.ln.allF.p05, NA)}
@@ -1564,7 +1624,7 @@ rownames(ttest.drho.intvls.TN.ln.allF.p05) <- 2:(nrow(ttest.drho.intvls.TN.ln.al
 ttest.drho.intvls.Moisture.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.Moisture.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.Moisture.ln.allF.p05))
 {
-	if (sum(!is.na(drho.intvls.Moisture.ln.allF.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.Moisture.ln.allF.p05[,i])) > 1) 
 	{ttest.drho.intvls.Moisture.ln.allF.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allF.p05, as.data.frame(t.test(drho.intvls.Moisture.ln.allF.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.Moisture.ln.allF.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allF.p05, NA)}
@@ -1574,7 +1634,7 @@ rownames(ttest.drho.intvls.Moisture.ln.allF.p05) <- 2:(nrow(ttest.drho.intvls.Mo
 ttest.drho.intvls.TOM.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.TOM.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.TOM.ln.allF.p05))
 {
-	if (sum(!is.na(drho.intvls.TOM.ln.allF.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.TOM.ln.allF.p05[,i])) > 1)
 	{ttest.drho.intvls.TOM.ln.allF.p05 <- rbind(ttest.drho.intvls.TOM.ln.allF.p05, as.data.frame(t.test(drho.intvls.TOM.ln.allF.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.TOM.ln.allF.p05 <- rbind(ttest.drho.intvls.TOM.ln.allF.p05, NA)}
@@ -1584,7 +1644,7 @@ rownames(ttest.drho.intvls.TOM.ln.allF.p05) <- 2:(nrow(ttest.drho.intvls.TOM.ln.
 ttest.drho.intvls.SSalt.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.SSalt.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.SSalt.ln.allF.p05))
 {
-	if (sum(!is.na(drho.intvls.SSalt.ln.allF.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.SSalt.ln.allF.p05[,i])) > 1) 
 	{ttest.drho.intvls.SSalt.ln.allF.p05 <- rbind(ttest.drho.intvls.SSalt.ln.allF.p05, as.data.frame(t.test(drho.intvls.SSalt.ln.allF.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.SSalt.ln.allF.p05 <- rbind(ttest.drho.intvls.SSalt.ln.allF.p05, NA)}
@@ -1594,7 +1654,7 @@ rownames(ttest.drho.intvls.SSalt.ln.allF.p05) <- 2:(nrow(ttest.drho.intvls.SSalt
 ttest.drho.intvls.AN.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.AN.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.AN.ln.allF.p05))
 {
-	if (sum(!is.na(drho.intvls.AN.ln.allF.p05[,i])) > 1) # t.test要求至少有2个数值
+	if (sum(!is.na(drho.intvls.AN.ln.allF.p05[,i])) > 1)
 	{ttest.drho.intvls.AN.ln.allF.p05 <- rbind(ttest.drho.intvls.AN.ln.allF.p05, as.data.frame(t.test(drho.intvls.AN.ln.allF.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
 	else 
 	{ttest.drho.intvls.AN.ln.allF.p05 <- rbind(ttest.drho.intvls.AN.ln.allF.p05, NA)}
@@ -1607,747 +1667,5 @@ ntwprop.edgels.intvls.Moisture.ln.allF.p05 <- netwk.properties(edgels.intvls.Moi
 ntwprop.edgels.intvls.TOM.ln.allF.p05 <- netwk.properties(edgels.intvls.TOM.ln.allF.p05)
 ntwprop.edgels.intvls.SSalt.ln.allF.p05 <- netwk.properties(edgels.intvls.SSalt.ln.allF.p05)
 ntwprop.edgels.intvls.AN.ln.allF.p05 <- netwk.properties(edgels.intvls.AN.ln.allF.p05)
-
-
-
-
-
-
-
-
-################
-
-# intvls.ln
-drho.intvls.NNA.allA.SSalt.ln.p05 <- melt(drho.intvls.allA.SSalt.ln.p05)
-colnames(drho.intvls.NNA.allA.SSalt.ln.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.allA.SSalt.ln.p05 <- drho.intvls.NNA.allA.SSalt.ln.p05[!is.na(drho.intvls.NNA.allA.SSalt.ln.p05$drho),]
-drho.intvls.NNA.allA.SSalt.ln.p05$intvl <- as.character(drho.intvls.NNA.allA.SSalt.ln.p05$intvl)
-
-ggplot(drho.intvls.NNA.allA.SSalt.ln.p05, aes(x = intvl, y = drho)) + geom_violin()
-
-ggplot(drho.intvls.NNA.allA.SSalt.ln.p05, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.allB.Altitude.ln.p05, aes(x = factor(intvl, level=c("3","8","9","10")), y = drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.allF.Altitude.ln.p05, aes(x = factor(intvl, level=c("4","8","9","10")), y = drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.allA.SSalt.ln.p001, aes(x = factor(intvl, level=c("10")), y = drho)) + geom_boxplot()
-# drho.intvls.NNA.allB.Altitude.ln.p001无有效值
-ggplot(drho.intvls.NNA.allF.Altitude.ln.p001, aes(x = factor(intvl, level=c("9","10")), y = drho)) + geom_boxplot()
-
-
-
-# 最后考虑使用ln化的allA和不ln的allB和allF
-# p05和p001合并在一张图上
-
-drho.intvls.NNA.allA.SSalt.ln.p05
-
-drho.intvls.NNA.allA.SSalt.ln.p05$p.value <- "<0.05"
-
-drho.intvls.NNA.allA.SSalt.ln.p05$col <- "#F2686C"
-drho.intvls.NNA.allA.SSalt.ln.p001$col <- "#EA2C33"
-drho.intvls.NNA.allB.Altitude.p05$col <- "#C19A73"
-drho.intvls.NNA.allB.Altitude.p001$col <- "#A66B45"
-drho.intvls.NNA.allF.Altitude.p05$col <- "#81B37A"
-drho.intvls.NNA.allF.Altitude.p001$col <- "#48734F"
-
-drho.intvls.NNA.allA.SSalt.ln.p05$col.dot <- "#FFC2C3"
-drho.intvls.NNA.allA.SSalt.ln.p001$col.dot <- "#F2686C"
-drho.intvls.NNA.allB.Altitude.p05$col.dot <- "#D5D2C1"
-drho.intvls.NNA.allB.Altitude.p001$col.dot <- "#BA8A5F"
-drho.intvls.NNA.allF.Altitude.p05$col.dot <- "#9BCFB8"
-drho.intvls.NNA.allF.Altitude.p001$col.dot <- "#74A46C"
-
-
-boxplot.drho.intvls.NNA.allA.SSalt.ln <- rbind(drho.intvls.NNA.allA.SSalt.ln.p05, drho.intvls.NNA.allA.SSalt.ln.p001)
-boxplot.drho.intvls.NNA.allB.Altitude <- rbind(drho.intvls.NNA.allB.Altitude.p05, drho.intvls.NNA.allB.Altitude.p001)
-boxplot.drho.intvls.NNA.allF.Altitude <- rbind(drho.intvls.NNA.allF.Altitude.p05, drho.intvls.NNA.allF.Altitude.p001)
-
-
-ggplot(boxplot.drho.intvls.NNA.allA.SSalt.ln, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho, colour = p.value)) + geom_boxplot(varwidth = T)
-
-# 没法像示例文件中那样弄成重叠的，后面手动调吧。
-ggplot(data=boxplot.drho.intvls.NNA.allA.SSalt.ln, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho)) + geom_boxplot(aes(colour = col))
-ggplot(data=boxplot.drho.intvls.NNA.allB.Altitude, aes(x=factor(intvl, level=c("2","7","8","9","10")), y=drho)) + geom_boxplot(aes(colour = col))
-ggplot(data=boxplot.drho.intvls.NNA.allF.Altitude, aes(x=factor(intvl, level=c("2","3","7","8","9","10")), y=drho)) + geom_boxplot(aes(colour = col))
-
-ggplot(data=boxplot.drho.intvls.NNA.allA.SSalt.ln, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho)) + geom_boxplot() + 
-scale_fill_manual(breaks = boxplot.drho.intvls.NNA.allA.SSalt.ln$col, values = boxplot.drho.intvls.NNA.allA.SSalt.ln$col)
-
-# boxplot.drho.intvls.NNA.allA.SSalt.ln
-line.drho.intvls.NNA.allA.SSalt.ln <- boxplot.drho.intvls.NNA.allA.SSalt.ln
-line.drho.intvls.NNA.allA.SSalt.ln$intvl <- as.integer(line.drho.intvls.NNA.allA.SSalt.ln$intvl)
-
-intvls.SSalt.ln.allA <- F.intervals(min(sample_data(ps.SSalt.ln.allA)$SSalt), max(sample_data(ps.SSalt.ln.allA)$SSalt), 10, 0.5)
-intvls.SSalt.ln.allA$intvl <- 1:10
-intvls.SSalt.ln.allA$range <- paste(round(intvls.SSalt.ln.allA$LeftBound, 4), round(intvls.SSalt.ln.allA$RightBound, 4), sep="~")
-
-line.drho.intvls.NNA.allA.SSalt.ln <- merge(line.drho.intvls.NNA.allA.SSalt.ln, intvls.SSalt.ln.allA, all = TRUE)
-ggplot(line.drho.intvls.NNA.allA.SSalt.ln, aes(x=intvl, y=drho)) + 
-    geom_point(colour = line.drho.intvls.NNA.allA.SSalt.ln$col.dot, size=2)+
-    geom_smooth(method = 'loess')
-
-# boxplot.drho.intvls.NNA.allB.Altitude
-line.drho.intvls.NNA.allB.Altitude <- boxplot.drho.intvls.NNA.allB.Altitude
-line.drho.intvls.NNA.allB.Altitude$intvl <- as.integer(line.drho.intvls.NNA.allB.Altitude$intvl)
-
-intvls.Altitude.allB <- F.intervals(min(sample_data(ps.allB)$Altitude), max(sample_data(ps.allB)$Altitude), 10, 0.5)
-intvls.Altitude.allB$intvl <- 1:10
-intvls.Altitude.allB$range <- paste(round(intvls.Altitude.allB$LeftBound, 4), round(intvls.Altitude.allB$RightBound, 4), sep="~")
-
-line.drho.intvls.NNA.allB.Altitude <- merge(line.drho.intvls.NNA.allB.Altitude, intvls.Altitude.allB, all = TRUE)
-# line.drho.intvls.NNA.allB.Altitude <- line.drho.intvls.NNA.allB.Altitude[!is.na(line.drho.intvls.NNA.allB.Altitude$drho),]
-ggplot(line.drho.intvls.NNA.allB.Altitude, aes(x=intvl, y=drho)) + 
-  geom_point(colour = line.drho.intvls.NNA.allB.Altitude$col, size=2)+
-  geom_smooth()
-# 对于做不出图，下文认为是数据太分散
-# https://stackoverflow.com/questions/49866476/difficulty-plotting-data-with-ggplot2-geom-smooth-method-loess
-ggplot(
-  data = df %>%
-    arrange(Participant_Gender, STM) %>%
-    slice(50:nrow(.)), 
-  mapping = aes(x = STM, y = ATTRACTcomp, color = Harasser_Attractiveness)
-  ) +
-  geom_jitter() +
-  geom_smooth() +
-  facet_wrap(~ Participant_Gender,
-    labeller = as_labeller(c("Female" = "Female Participants", "Male" = "Male Participants"))
-  ) +
-  labs(
-    title = paste(strwrap("Interaction of Harasser Attractiveness, Participant Gender 
-                             and SOI on Attraction/Flattery", 50), collapse = "\n"),
-    x = "Participant Short-term Mating Orientation",
-    y = "Participant Attraction/Flattery",
-    color = "Harasser:"
-  ) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.caption = element_text(hjust = 0, margin = margin(t = 15, 0, 0, 0)),
-    legend.position = "top",
-    legend.margin = margin(1, 0, 0, 0),
-    legend.title = element_text(size = 10),
-    legend.text = element_text(size = 9),
-    legend.key.size = unit(c(12), "pt")
-  )
-
-
-loess.drho.intvls.allB.Altitude <- loess(drho ~ intvl, line.drho.intvls.NNA.allB.Altitude)
-predict(loess.drho.intvls.allB.Altitude, data.frame(intvl = seq(1:10)), se = TRUE)
-
-
-# boxplot.drho.intvls.NNA.allF.Altitude
-line.drho.intvls.NNA.allF.Altitude <- boxplot.drho.intvls.NNA.allF.Altitude
-line.drho.intvls.NNA.allF.Altitude$intvl <- as.integer(line.drho.intvls.NNA.allF.Altitude$intvl)
-
-intvls.Altitude.allF <- F.intervals(min(sample_data(ps.allF)$Altitude), max(sample_data(ps.allF)$Altitude), 10, 0.5)
-intvls.Altitude.allF$intvl <- 1:10
-intvls.Altitude.allF$range <- paste(round(intvls.Altitude.allF$LeftBound, 4), round(intvls.Altitude.allF$RightBound, 4), sep="~")
-
-line.drho.intvls.NNA.allF.Altitude <- merge(line.drho.intvls.NNA.allF.Altitude, intvls.Altitude.allF, all = TRUE)
-ggplot(line.drho.intvls.NNA.allF.Altitude, aes(x=intvl, y=drho)) + 
-  geom_point(colour = line.drho.intvls.NNA.allF.Altitude$col, size=2)+
-  geom_smooth(method = 'loess')+
-  scale_x_discrete(label = c("1715~2143","1929~2357","2143~2571","2357~2785","2571~2999","2785~3213","2999~3427","3213~3641","3427~3855","3641~4069"))
-  
-
-  xlab("My x label") +
-  ylab("My y label") +
-  ggtitle("Weighted Scatterplot of Watershed Area vs. Discharge and Nitrogen Levels (PPM)")
-+ theme(axis.text.x = line.drho.intvls.NNA.allF.Altitude$range)
-
-
-
-line.drho.intvls.NNA.allA.SSalt.ln
-line.drho.intvls.NNA.allB.Altitude
-line.drho.intvls.NNA.allF.Altitude
-
-line.drho.intvls.NNA.allA.SSalt.ln
-line.drho.intvls.NNA.allB.Altitude
-line.drho.intvls.NNA.allF.Altitude
-
-
-# 用的颜色分别为：
-colfunc.A(12)[4,6]
-"#F2686C"
-"#EA2C33"
-colfunc.B(12)[4,8]
-"#C19A73"
-"#A66B45"
-colfunc.F(12)[6,9]
-"#81B37A"
-"#48734F"
-
-# 划线的话：
-colfunc.A(12)[1,4]
-"#FFC2C3"
-"#F2686C"
-colfunc.B(12)[1,5]
-"#D5D2C1"
-"#BA8A5F"
-colfunc.F(12)[1,7]
-"#9BCFB8"
-"#74A46C"
-
-drho.intvls.NNA.allF.Altitude.p001 <- melt(drho.intvls.allF.Altitude.p001)
-colnames(drho.intvls.NNA.allF.Altitude.p001) <- c("trivial","intvl","drho")
-drho.intvls.NNA.allF.Altitude.p001 <- drho.intvls.NNA.allF.Altitude.p001[!is.na(drho.intvls.NNA.allF.Altitude.p001$drho),]
-drho.intvls.NNA.allF.Altitude.p05 <- melt(drho.intvls.allF.Altitude.p05)
-colnames(drho.intvls.NNA.allF.Altitude.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.allF.Altitude.p05 <- drho.intvls.NNA.allF.Altitude.p05[!is.na(drho.intvls.NNA.allF.Altitude.p05$drho),]
-
-boxplot.drho.intvls.NNA.allF.Altitude
-p <- ggplot(boxplot.drho.intvls.NNA.allF.Altitude, aes(x=intvl, y=drho, shape=Habitat, color=Habitat) +
-     geom_point() + 
-     geomsmooth(method=lm, aes(fill=Habitat))
-
-ggplot(boxplot.drho.intvls.NNA.allF.Altitude, aes(x=intvl, y=drho, color=col) +
-     geom_point() + 
-     geomsmooth(method=lm, aes(fill=col))
-
-
-# 没法像示例文件中那样弄成重叠的，后面手动调吧。
-
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-
-# Archaea: Rosy reds. Light pink, #FFC2C3; red rose, #E81E25;coral, #FE7773;  black berry, #0E0301.
-# # Bacteria: Mellow Agate. Mustard, #FFD954; Dijon, #E4B660; Honey, #F2AB39; Chestnut, #694911.
-# Bacteria: Western Wear. Linen, #D5D2C1; Twine, #BD8E62; Fawn, #A46843; Hickory, #370D00.
-# Fungi: Emerald Garden. Cool mint, #9BCFB8; Succulent, #7FB174; Juniper, #689C97; Brunswick, #072A24.
-# 
-# 用以上配色方案制成渐变色，以产生更多的颜色。
-# colfunc.A <- colorRampPalette(c("#FFC2C3", "#E81E25", "#FE7773", "#0E0301"))
-# colfunc.B <- colorRampPalette(c("#D5D2C1", "#BD8E62", "#A46843", "#694911"))
-# colfunc.F <- colorRampPalette(c("#9BCFB8", "#7FB174", "#689C97", "#072A24"))
-colfunc.A <- colorRampPalette(c("#FFC2C3", "#E81E25", "#0E0301"))
-colfunc.B <- colorRampPalette(c("#D5D2C1", "#BD8E62", "#A46843", "#694911"))
-colfunc.F <- colorRampPalette(c("#9BCFB8", "#7FB174", "#072A24"))
-plot(rep(1,12),col=(colfunc.A(12)), pch=19,cex=2)
-plot(rep(1,12),col=(colfunc.B(12)), pch=19,cex=2)
-plot(rep(1,12),col=(colfunc.F(12)), pch=19,cex=2)
-
-
-
-
-
-# 比较sunny和shade坡的网络
-rm(list=ls()[!(ls() %in% c("ps.allA", "ps.allB", "ps.allF"))])
-save.image("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-
-
-library(ShortRead)
-library(Biostrings)
-library(phyloseq)
-library(vegan)
-library(ecodist)
-
-setwd("C:/Users/Administrator/Nutstore/1/我的坚果云/_ZhJproject-Pamir/0.3Rdata")
-load("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-
-c("AktShade","OytGlaShade","SbsShade")
-c("AktSun","OytGlaSun","SbsSun")
-
-ps.allA.sun <- prune_samples(sample_data(ps.allA)$Location %in% c("AktSun","OytGlaSun","SbsSun"), ps.allA)
-ps.allA.shade <- prune_samples(sample_data(ps.allA)$Location %in% c("AktShade","OytGlaShade","SbsShade"), ps.allA)
-ps.allB.sun <- prune_samples(sample_data(ps.allB)$Location %in% c("AktSun","OytGlaSun","SbsSun"), ps.allB)
-ps.allB.shade <- prune_samples(sample_data(ps.allB)$Location %in% c("AktShade","OytGlaShade","SbsShade"), ps.allB)
-ps.allF.sun <- prune_samples(sample_data(ps.allF)$Location %in% c("AktSun","OytGlaSun","SbsSun"), ps.allF)
-ps.allF.shade <- prune_samples(sample_data(ps.allF)$Location %in% c("AktShade","OytGlaShade","SbsShade"), ps.allF)
-
-
-psls.ss.allA <- list(ps.allA.sun, ps.allA.shade)
-psls.ss.allB <- list(ps.allB.sun, ps.allB.shade)
-psls.ss.allF <- list(ps.allF.sun, ps.allF.shade)
-
-
-library(doParallel)
-library(parallel)
-library(foreach)
-registerDoParallel(4)
-
-edgelsls.ss.allA.001.80 <- psls2edgelsls.bi(psls.ss.allA, 0.001, 0.8, -0.8)
-save.image("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-edgelsls.ss.allF.001.80 <- psls2edgelsls.bi(psls.ss.allF, 0.001, 0.8, -0.8)
-save.image("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-edgelsls.ss.allB.001.80 <- psls2edgelsls.bi(psls.ss.allB, 0.001, 0.8, -0.8)
-save.image("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-
-edgelsls.ss.allA.001.70 <- psls2edgelsls.bi(psls.ss.allA, 0.001, 0.7, -0.7)
-edgelsls.ss.allA.001.10 <- psls2edgelsls.bi(psls.ss.allA, 0.001, 0.1, -0.1)
-save.image("ZhJ-Pamir-combined-1.0-network-sunshade-linux-delta.Rdata")
-
-
-
-
-
-
-
-
-#################################
-# 加算：ABF的前三环境因子
-
-intvls.allA.SSalt.ln <- ps2ls.interval(ps.SSalt.ln.allA, "SSalt", 10, 0.5)
-intvls.allB.Altitude.ln <- ps2ls.interval(ps.Altitude.ln.allB, "Altitude", 10, 0.5)
-intvls.allF.Altitude.ln <- ps2ls.interval(ps.Altitude.ln.allF, "Altitude", 10, 0.5)
-
-
-intvls.allA.SSalt <- ps2ls.interval(ps.allA, "SSalt", 10, 0.5)
-intvls.allB.Altitude <- ps2ls.interval(ps.allB, "Altitude", 10, 0.5)
-intvls.allF.Altitude <- ps2ls.interval(ps.allF, "Altitude", 10, 0.5)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############### SEM
-
-env.clim <- read.csv("Locinform.clim.delta.csv", header = TRUE, row.names = 1)
-
-
-install.packages("lavaan")
-install.packages("semPlot")
-install.packages("semTools")
-
-install.packages("XML", type = "binary")  # 直接装XML报错，要指定binary
-
-
-library(lavaan)
-
-
-
-betadiv.L.allA$Location <- rownames(betadiv.L.allA)
-betadiv.L.allB$Location <- rownames(betadiv.L.allB)
-betadiv.L.allF$Location <- rownames(betadiv.L.allF)
-
-sem.data.allA <- merge(as.matrix(alphadiv.allA), betadiv.L.allA, by = "Location")
-sem.data.allB <- merge(as.matrix(alphadiv.allB), betadiv.L.allB, by = "Location")
-sem.data.allF <- merge(as.matrix(alphadiv.allF), betadiv.L.allF, by = "Location")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############### phylogeny beta-diversity，betaNTI，遗传差异？
-
-
-
-############### 随机性分析？高程方法？
-
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############### 计算edge list
-
-# 用cor.test计算网络的基本函数，得到一个edge的list
-df2edge <- function(inputdf) 
-	{
-	results<-matrix(nrow=0,ncol=6)
-	for (i in 1:(dim(inputdf)[2]-1))
-		{
-		for (j in (i+1):dim(inputdf)[2])
-			{
-			species1.ab<-sum(inputdf[,i])
-			species2.ab<-sum(inputdf[,j])
-			if(species1.ab > 0 & species2.ab > 0)
-				{
-				test<-cor.test(inputdf[, i],inputdf[, j],method="spearman",na.action=na.rm)
-				rho<-as.numeric(test$estimate)
-				p.value<-as.numeric(test$p.value)
-				}		
-			if(species1.ab == 0 | species2.ab == 0)
-				{
-				rho<-0
-				p.value<-1
-				}
-			new.row<-c(colnames(inputdf)[i],colnames(inputdf)[j],rho,p.value,species1.ab,species2.ab)
-			results<-rbind(results,new.row)		
-			}
-			print(paste(i, "out of", dim(inputdf)[2], sep = " "))
-		}
-	results <- as.data.frame(results)
-	colnames(results)<-c("ASV1","ASV2","rho","p.value","ab1","ab2")
-	results
-	}
-
-# 限定rho和p值来筛选df2edge得到的edge list
-edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
-	{
-	edgelstemp <- base::transform(inputedgelst, p.value = as.numeric(as.character(p.value)), rho = as.numeric(as.character(rho))) # 如果不加as.character，会变成莫名其妙的整数
-	edgelstemp <- edgelstemp[edgelstemp[,"p.value"] < inputp,]
-	edgelstemp <- edgelstemp[edgelstemp[,"rho"] < inputrhobtm|edgelstemp[,"rho"] > inputrhoupper,]
-	edgelstemp
-	}
-
-
-ps2edgels <- function(inputps, inputp, inputrhoupper, inputrhobtm)
-	{
-	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-	tempedgels <- df2edge(tempdf)
-	tempedgels <- edgefltr(tempedgels, inputp, inputrhoupper, inputrhobtm)
-	tempedgels
-	}
-
-
-
-
-
-############### 计算二元网络一元投影后的edge list
-# 在数学上很简单，就是把成对数据中，一方为0的一对删掉即可。
-
-# 用cor.test计算网络的基本函数，得到一个edge的list
-df2edge.bi <- function(inputdf) 
-	{
-	results<-matrix(nrow=0,ncol=6)
-	for (i in 1:(dim(inputdf)[2]-1))
-		{
-		for (j in (i+1):dim(inputdf)[2])
-			{
-			tempx <- as.vector(inputdf[, i])
-			tempy <- as.vector(inputdf[, j])
-			nonZero <- tempx*tempy != 0
-			tempx <- tempx[nonZero]
-			tempy <- tempy[nonZero]
-			if(length(tempx)>1)
-			{
-				species1.ab<-sum(tempx)
-				species2.ab<-sum(tempy)
-				if(species1.ab > 0 & species2.ab > 0)
-					{
-					test<-cor.test(tempx, tempy, method="spearman", na.action=na.rm)
-					rho<-as.numeric(test$estimate)
-					p.value<-as.numeric(test$p.value)
-					}		
-				if(species1.ab == 0 | species2.ab == 0)
-					{
-					rho <- 0
-					p.value <- 1
-					}
-			}
-			else
-			{
-				rho <- 0
-				p.value <- 1
-			}
-			new.row<-c(colnames(inputdf)[i],colnames(inputdf)[j],rho,p.value,species1.ab,species2.ab)
-			results<-rbind(results,new.row)		
-			}
-			print(paste(i, "out of", dim(inputdf)[2], sep = " "))
-		}
-	results <- as.data.frame(results)
-	colnames(results)<-c("ASV1","ASV2","rho","p.value","ab1","ab2")
-	results
-	}
-
-# 限定rho和p值来筛选df2edge得到的edge list
-edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
-	{
-	edgelstemp <- base::transform(inputedgelst, p.value = as.numeric(as.character(p.value)), rho = as.numeric(as.character(rho))) # 如果不加as.character，会变成莫名其妙的整数
-	edgelstemp <- edgelstemp[edgelstemp[,"p.value"] < inputp,]
-	edgelstemp <- edgelstemp[edgelstemp[,"rho"] < inputrhobtm|edgelstemp[,"rho"] > inputrhoupper,]
-	edgelstemp
-	}
-
-
-ps2edgels.bi <- function(inputps)
-	{
-	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-	colnames(tempdf) <- as.data.frame(tax_table(inputps))[,dim(tax_table(inputps))[2]]
-	tempedgels <- df2edge.bi(tempdf)
-	tempedgels
-	}
-
-# ps2edgelsfltr.bi <- function(inputps, inputp, inputrhoupper, inputrhobtm)
-# 	{
-# 	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-# 	tempedgels <- df2edge.bi(tempdf)
-# 	tempedgels <- edgefltr(tempedgels, inputp, inputrhoupper, inputrhobtm)
-# 	tempedgels
-# 	}
-
-edgels.bi.allA <- ps2edgels.bi(ps.allA)
-edgels.bi.allB <- ps2edgels.bi(ps.allB)
-edgels.bi.allF <- ps2edgels.bi(ps.allF)
-
-edgels.allA <- ps2edgels(ps.allA)
-edgels.allB <- ps2edgels(ps.allB)
-edgels.allF <- ps2edgels(ps.allF)
-
-
-
-
-edgels.bi.allA.001.80 <- edgefltr(edgels.bi.allA, 0.001, 0.8, -0.8)
-edgels.bi.allB.001.80 <- edgefltr(edgels.bi.allB, 0.001, 0.8, -0.8)
-edgels.bi.allF.001.80 <- edgefltr(edgels.bi.allF, 0.001, 0.8, -0.8)
-
-edgels.allA.001.80 <- edgefltr(edgels.allA, 0.001, 0.8, -0.8)
-edgels.allB.001.80 <- edgefltr(edgels.allB, 0.001, 0.8, -0.8)
-edgels.allF.001.80 <- edgefltr(edgels.allF, 0.001, 0.8, -0.8)
-
-
-
-
-addEVattribute <- function(inputedgelist, inputps)
-{
-	temp.igraph <- graph_from_edgelist(as.matrix(inputedgelist[,1:2]), directed = FALSE)
-    # temp.nodels <- unique(c(inputedgelist$ASV1, inputedgelist$ASV2))
-    tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-    temp.taxinfo <- as.data.frame(tax_table(inputps))
-    temp.taxinfo <- temp.taxinfo[temp.taxinfo$Species %in% names(V(temp.igraph)),]
-    temp.taxinfo$taxid <- rownames(temp.taxinfo)
-    rownames(temp.taxinfo) <- temp.taxinfo$Species
-    temp.taxinfo <- cbind(temp.taxinfo, data.frame(abund = apply(tempdf[,colnames(tempdf) %in% temp.taxinfo$taxid],2,sum)))
-    temp.taxinfo$RA <- 100*temp.taxinfo$abund/sum(tempdf)
-	V(temp.igraph)$RA <- temp.taxinfo[,"RA"]
-	V(temp.igraph)$abund <- temp.taxinfo[,"abund"]
-	V(temp.igraph)$Species <- as.character(temp.taxinfo[,"Species"])
-	# V(temp.igraph)$colnode <- inputcolnode[round(100*V(temp.igraph)$ra)+1] # 这里需要+1，不然当ra四舍五入为0的时候就会出错，变成最高值。
-	E(temp.igraph)$weight <- inputedgelist$rho
-	E(temp.igraph)$weight <- NA
-	temp.igraph
-}
-
-
-igraph.edgels.bi.allA.001.80 <- addEVattribute(edgels.bi.allA.001.80, ps.allA)
-igraph.edgels.bi.allB.001.80 <- addEVattribute(edgels.bi.allB.001.80, ps.allB)
-igraph.edgels.bi.allF.001.80 <- addEVattribute(edgels.bi.allF.001.80, ps.allF)
-
-igraph.edgels.allA.001.80 <- addEVattribute(edgels.allA.001.80, ps.allA)
-igraph.edgels.allB.001.80 <- addEVattribute(edgels.allB.001.80, ps.allB)
-igraph.edgels.allF.001.80 <- addEVattribute(edgels.allF.001.80, ps.allF)
-
-netwk.properties(list(edgels.bi.allA.001.80))
-netwk.properties(list(edgels.bi.allB.001.80))
-netwk.properties(list(edgels.bi.allF.001.80))
-
-netwk.properties(list(edgels.allA.001.80))
-netwk.properties(list(edgels.allB.001.80))
-netwk.properties(list(edgels.allF.001.80))
-
-
-
-edgels.bi.allA <- ps2edgels.bi(ps.allA)
-edgels.bi.allB <- ps2edgels.bi(ps.allB)
-edgels.bi.allF <- ps2edgels.bi(ps.allF)
-
-
-#############放到服务器上算
-
-
-rm(list=ls()[!(ls() %in% c("ps.allA", "ps.allB", "ps.allF"))])
-save.image("ZhJ-Pamir-all-1.0-general-delta-linux.Rdata")
-nohup /home/liufei/anaconda3/envs/r4-base/bin/Rscript /home/sunx/PamirMicrobiome/0.3Rdata/ZhJ-Pamir-all-1.0-network-linux-rscript-delta.R &
-
-
-# DHL
-nohup /share/home/software/software/R-4.1.2/bin/Rscript /share/home/sunxiang/PamirMicrobiome/0.3Rdata/ZhJ-Pamir-combined-1.0-network-linux-DHL-rscript-delta.R &
-
-
-
-comb.otu <- read.csv("ps.combine.otu.delta.csv",header = TRUE, row.names = 1)
-comb.samdf <- read.csv("ps.combine.samdf.delta.csv",header = TRUE, row.names = 1)
-comb.tax <- read.csv("ps.combine.tax.delta.csv",header = TRUE, row.names = 1)
-ps.comb <- phyloseq(otu_table(comb.otu, taxa_are_rows = FALSE), sample_data(comb.samdf), tax_table(as.matrix(comb.tax)))
-save.image("ZhJ-Pamir-combined-1.0-network-linux-delta.Rdata")
-
-
-
-
-
-#############本地计算当地网络
-
-
-
-按照不同环境因子对ps进行subset
-
-
-subsetps <- function(inputps, envfator, factorvalue)
-	{
-	outputps <- prune_samples(as.logical(sample_data(inputps)[,envfator]==factorvalue), inputps) 
-	# sample_data(inputps)$envfator的形式可以直接用，但是sample_data(inputps)[,envfator]形式的时候必须加上as.logical
-	outputps <- prune_taxa(taxa_sums(outputps) > 0, outputps)
-	outputps	
-	}
-subsetps2 <- function(inputps, envfator1, factorvalue1, envfator2, factorvalue2)
-	{
-	outputps <- prune_samples(as.logical(sample_data(inputps)[,envfator1]==factorvalue1), inputps) 
-	outputps <- prune_samples(as.logical(sample_data(outputps)[,envfator2]==factorvalue2), outputps) 
-	outputps <- prune_taxa(taxa_sums(outputps) > 0, outputps)
-	outputps	
-	}
-
-
-
-ps.Aep <- subsetps(ps,"Host","Aegilops_peregrina")
-
-sitesHL <- c("Ulug", "SbsSun", "SbsShade", "Kulma", "Muztagata", "SBDLake", "KongT", "SbsBrdg7", "SbsBrdg8", "BulLake", "Gez1", "Gez2", "AktShade", "AktSun", "OytGlaShade", "OytGlaSun", "OytBrdg1")
-
-
-subps2ls.cat <- 
-
-
-
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-comb.otu <- read.csv("ps.combine.otu.delta.csv",header = TRUE, row.names = 1)
-comb.samdf <- read.csv("ps.combine.samdf.delta.csv",header = TRUE, row.names = 1)
-comb.tax <- read.csv("ps.combine.tax.delta.csv",header = TRUE, row.names = 1)
-ps.comb <- phyloseq(otu_table(comb.otu, taxa_are_rows = FALSE), sample_data(comb.samdf), tax_table(as.matrix(comb.tax)))
-save.image("ZhJ-Pamir-combined-1.0-network-linux-delta.Rdata")
-
-nohup /home/liufei/anaconda3/envs/r4-base/bin/Rscript /home/sunx/PamirMicrobiome/0.3Rdata/ZhJ-Pamir-combined-1.0-network-linux-rscript-delta.R &
-
-
-
-
-
-
-
-
-
 
 
