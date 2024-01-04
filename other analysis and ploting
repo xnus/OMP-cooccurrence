@@ -1079,7 +1079,6 @@ edgels.intvls.SSalt.ln.allA <- list(NULL)
 		else
 		{edgels.intvls.SSalt.ln.allA[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.SSalt.ln.allA),"##########", sep = " "))}
-
 edgels.intvls.TN.ln.allA <- list(NULL)
     for (i in 1:length(intvls.TN.ln.allA))
 	{
@@ -1088,7 +1087,6 @@ edgels.intvls.TN.ln.allA <- list(NULL)
 		else
 		{edgels.intvls.TN.ln.allA[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.TN.ln.allA),"##########", sep = " "))}
-
 edgels.intvls.pH.ln.allA <- list(NULL)
     for (i in 1:length(intvls.pH.ln.allA))
 	{
@@ -1097,7 +1095,6 @@ edgels.intvls.pH.ln.allA <- list(NULL)
 		else
 		{edgels.intvls.pH.ln.allA[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.pH.ln.allA),"##########", sep = " "))}
-
 edgels.intvls.PPS.ln.allA <- list(NULL)
     for (i in 1:length(intvls.PPS.ln.allA))
 	{
@@ -1106,7 +1103,6 @@ edgels.intvls.PPS.ln.allA <- list(NULL)
 		else
 		{edgels.intvls.PPS.ln.allA[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.PPS.ln.allA),"##########", sep = " "))}
-
 edgels.intvls.AN.ln.allA <- list(NULL)
     for (i in 1:length(intvls.AN.ln.allA))
 	{
@@ -1126,7 +1122,6 @@ for (i in 1:length(edgels.intvls.SSalt.ln.allA))
 		{edgels.intvls.SSalt.ln.allA.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.SSalt.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.TN.ln.allA.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.TN.ln.allA))
 	{
@@ -1136,7 +1131,6 @@ for (i in 1:length(edgels.intvls.TN.ln.allA))
 		{edgels.intvls.TN.ln.allA.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.TN.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.pH.ln.allA.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.pH.ln.allA))
 	{
@@ -1146,7 +1140,6 @@ for (i in 1:length(edgels.intvls.pH.ln.allA))
 		{edgels.intvls.pH.ln.allA.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.pH.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.PPS.ln.allA.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.PPS.ln.allA))
 	{
@@ -1156,7 +1149,6 @@ for (i in 1:length(edgels.intvls.PPS.ln.allA))
 		{edgels.intvls.PPS.ln.allA.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.PPS.ln.allA.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.AN.ln.allA.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.AN.ln.allA))
 	{
@@ -1279,10 +1271,7 @@ for (i in 3:ncol(drho.intvls.AN.ln.allA.p05))
 }
 rownames(ttest.drho.intvls.AN.ln.allA.p05) <- 2:(nrow(ttest.drho.intvls.AN.ln.allA.p05)+1)
 
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-
-# 计算网络参数
+# calculate network properties from a list of edgelist
 netwk.properties <- function(inputedgelsls)
 {
 	temp.properties <- matrix(data = NA, nrow=0, ncol = 10)
@@ -1320,113 +1309,7 @@ ntwprop.edgels.intvls.PPS.ln.allA.p05 <- netwk.properties(edgels.intvls.PPS.ln.a
 ntwprop.edgels.intvls.AN.ln.allA.p05 <- netwk.properties(edgels.intvls.AN.ln.allA.p05)
 
 
-
-mergerho.intvls2PosNegPercent <- function(inputmergerho){
-	tempPos <- colSums(apply(inputmergerho,2,as.numeric)>0, na.rm=TRUE)
-	tempNeg <- colSums(apply(inputmergerho,2,as.numeric)<0, na.rm=TRUE)
-	tempsum <- tempPos+tempNeg
-	tempPosPercent <- tempPos/tempsum
-	tempNegPercent <- tempNeg/tempsum
-	tempdf <- data.frame(tempPos, tempNeg, tempsum, tempPosPercent, tempNegPercent)
-	tempdf
-}
-
-mergerho.intvls2PosNegPercent(mergerho.intvls.SSalt.ln.allA.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.TN.ln.allA.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.pH.ln.allA.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.PPS.ln.allA.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.AN.ln.allA.p05[,3:12])
-
-
-
-melt.mergerho.intvls.SSalt.ln.allA.p05 <- melt(mergerho.intvls.SSalt.ln.allA.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.TN.ln.allA.p05 <- melt(mergerho.intvls.TN.ln.allA.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.pH.ln.allA.p05 <- melt(mergerho.intvls.pH.ln.allA.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.PPS.ln.allA.p05 <- melt(mergerho.intvls.PPS.ln.allA.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.AN.ln.allA.p05 <- melt(mergerho.intvls.AN.ln.allA.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-
-melt.mergerho.intvls.SSalt.ln.allA.p05$value <- as.numeric(melt.mergerho.intvls.SSalt.ln.allA.p05$value)
-melt.mergerho.intvls.TN.ln.allA.p05$value <- as.numeric(melt.mergerho.intvls.TN.ln.allA.p05$value)
-melt.mergerho.intvls.pH.ln.allA.p05$value <- as.numeric(melt.mergerho.intvls.pH.ln.allA.p05$value)
-melt.mergerho.intvls.PPS.ln.allA.p05$value <- as.numeric(melt.mergerho.intvls.PPS.ln.allA.p05$value)
-melt.mergerho.intvls.AN.ln.allA.p05$value <- as.numeric(melt.mergerho.intvls.AN.ln.allA.p05$value)
-
-ggplot(melt.mergerho.intvls.SSalt.ln.allA.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.TN.ln.allA.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.pH.ln.allA.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.PPS.ln.allA.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.AN.ln.allA.p05, aes(x=variable, y=value)) +
-  geom_point()
-
-# ggplot(melt.mergerho.intvls.TN.ln.allA.p05, aes(x=variable, y=value)) +
-#   geom_point() +
-#   geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-#   theme_ipsum()
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 第二部分是群落区间数据
-# 这是群落数据
-intvls.SSalt.ln.allA
-intvls.TN.ln.allA
-intvls.pH.ln.allA
-intvls.PPS.ln.allA
-intvls.AN.ln.allA
-# 这是环境区间数据
-env.intvls.SSalt.ln.allA <- F.intervals(min(sample_data(ps.SSalt.ln.allA)),max(sample_data(ps.SSalt.ln.allA)),10,0.3)
-env.intvls.TN.ln.allA <- F.intervals(min(sample_data(ps.TN.ln.allA)),max(sample_data(ps.TN.ln.allA)),10,0.3)
-env.intvls.pH.ln.allA <- F.intervals(min(sample_data(ps.pH.ln.allA)),max(sample_data(ps.pH.ln.allA)),10,0.3)
-env.intvls.PPS.ln.allA <- F.intervals(min(sample_data(ps.PPS.ln.allA)),max(sample_data(ps.PPS.ln.allA)),10,0.3)
-env.intvls.AN.ln.allA <- F.intervals(min(sample_data(ps.AN.ln.allA)),max(sample_data(ps.AN.ln.allA)),10,0.3)
-
-
-
-
-
-
-
-############################################allB windowed
-
-library(ShortRead)
-library(Biostrings)
-library(phyloseq)
-library(vegan)
-library(ecodist)
-library(igraph)
-library(ggplot2)
-library(bipartite)
-library(reshape2)
-library(ggpubr)
-library(grid)
-library(gridExtra)
-
-setwd("C:/Users/Administrator/Nutstore/1/我的坚果云/_ZhJproject-Pamir/0.3Rdata")
-load("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# intvls.PPS.ln.allB
-# intvls.Moisture.ln.allB
-
-library(doParallel)
-library(parallel)
-library(foreach)
-registerDoParallel(2)
+## bacterial dataset
 
 edgels.intvls.PPS.ln.allB <- list(NULL)
     for (i in 1:length(intvls.PPS.ln.allB))
@@ -1436,7 +1319,6 @@ edgels.intvls.PPS.ln.allB <- list(NULL)
 		else
 		{edgels.intvls.PPS.ln.allB[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.PPS.ln.allB),"##########", sep = " "))}
-
 edgels.intvls.Moisture.ln.allB <- list(NULL)
     for (i in 1:length(intvls.Moisture.ln.allB))
 	{
@@ -1445,33 +1327,6 @@ edgels.intvls.Moisture.ln.allB <- list(NULL)
 		else
 		{edgels.intvls.Moisture.ln.allB[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.Moisture.ln.allB),"##########", sep = " "))}
-
-
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-
-# intvls.ln
-# p<0.001
-edgels.intvls.PPS.ln.allB.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.PPS.ln.allB))
-	{
-		if (!is.numeric(edgels.intvls.PPS.ln.allB[[i]]))
-		{edgels.intvls.PPS.ln.allB.p001[[i]] <- as.data.frame(edgels.intvls.PPS.ln.allB[[i]])[edgels.intvls.PPS.ln.allB[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.PPS.ln.allB.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.PPS.ln.allB.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.Moisture.ln.allB.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.Moisture.ln.allB))
-	{
-		if (!is.numeric(edgels.intvls.Moisture.ln.allB[[i]]))
-		{edgels.intvls.Moisture.ln.allB.p001[[i]] <- as.data.frame(edgels.intvls.Moisture.ln.allB[[i]])[edgels.intvls.Moisture.ln.allB[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.Moisture.ln.allB.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.Moisture.ln.allB.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
 
 # p<0.05
 edgels.intvls.PPS.ln.allB.p05 <- list(NULL)
@@ -1483,7 +1338,6 @@ for (i in 1:length(edgels.intvls.PPS.ln.allB))
 		{edgels.intvls.PPS.ln.allB.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.PPS.ln.allB.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.Moisture.ln.allB.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.Moisture.ln.allB))
 	{
@@ -1494,58 +1348,24 @@ for (i in 1:length(edgels.intvls.Moisture.ln.allB))
 		colnames(edgels.intvls.Moisture.ln.allB.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
 
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 3、根据edge列merge各edgels$rho
-
 mergerho.intvls.PPS.ln.allB.p05 <- merge.rho(edgels.intvls.PPS.ln.allB.p05)
 mergerho.intvls.Moisture.ln.allB.p05 <- merge.rho(edgels.intvls.Moisture.ln.allB.p05)
-# 计算rho（即NA）出现的次数，过滤掉只出现一次的
+# count times of rho occurred, and remove edges only formed once among all networks (rho.count = 1)
 mergerho.intvls.PPS.ln.allB.p05$rho.count <- rowSums(!is.na(mergerho.intvls.PPS.ln.allB.p05[,3:12]))
 mergerho.intvls.Moisture.ln.allB.p05$rho.count <- rowSums(!is.na(mergerho.intvls.Moisture.ln.allB.p05[,3:12]))
 
-# 4、drho/dgradient
-# 计算drho，按行来逐个判断：
-# 首先判断第一列是否NA，如果NA，则进入下一列
-# 如果不是NA，则记录该值a，记录列值m，然后进入下一列
-# 下一列如果是NA，则进入下一列
-# 下一列如果不是NA，则记录该值b，记录列值n，计算(b-a)/(n-m)，
-
-# intvls.ln
 mergerho.intvls.PPS.ln.allB.p05.fltr <- mergerho.intvls.PPS.ln.allB.p05[mergerho.intvls.PPS.ln.allB.p05[,"rho.count"]>1,]
 mergerho.intvls.Moisture.ln.allB.p05.fltr <- mergerho.intvls.Moisture.ln.allB.p05[mergerho.intvls.Moisture.ln.allB.p05[,"rho.count"]>1,]
 
+# calculate the changes of rho between common edges.
 drho.intvls.PPS.ln.allB.p05 <- drho(mergerho.intvls.PPS.ln.allB.p05.fltr)
 drho.intvls.Moisture.ln.allB.p05 <- drho(mergerho.intvls.Moisture.ln.allB.p05.fltr)
 
-# 顺便，计算出各网络中，出现次数大于等于4的core 列表
+# target core interactions present in 5 or more networks 
 mergerho.intvls.PPS.ln.allB.p05.core <- mergerho.intvls.PPS.ln.allB.p05[mergerho.intvls.PPS.ln.allB.p05[,"rho.count"]>3,]
 mergerho.intvls.Moisture.ln.allB.p05.core <- mergerho.intvls.Moisture.ln.allB.p05[mergerho.intvls.Moisture.ln.allB.p05[,"rho.count"]>3,]
 
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-################画图
-
-# intvls.ln
-drho.intvls.NNA.PPS.ln.allB.p05 <- melt(drho.intvls.PPS.ln.allB.p05)
-colnames(drho.intvls.NNA.PPS.ln.allB.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.PPS.ln.allB.p05 <- drho.intvls.NNA.PPS.ln.allB.p05[!is.na(drho.intvls.NNA.PPS.ln.allB.p05$drho),]
-drho.intvls.NNA.PPS.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.PPS.ln.allB.p05$intvl)
-
-drho.intvls.NNA.Moisture.ln.allB.p05 <- melt(drho.intvls.Moisture.ln.allB.p05)
-colnames(drho.intvls.NNA.Moisture.ln.allB.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.Moisture.ln.allB.p05 <- drho.intvls.NNA.Moisture.ln.allB.p05[!is.na(drho.intvls.NNA.Moisture.ln.allB.p05$drho),]
-drho.intvls.NNA.Moisture.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.Moisture.ln.allB.p05$intvl)
-
-ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x=factor(intvl, level=c("2","5","6","7","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x=factor(intvl, level=c("2","7","8","9","10")), y=drho)) + geom_boxplot()
-
-
+# ploting
 drho.intvls.NNA.PPS.ln.allB.p05$intvl <- as.numeric(drho.intvls.NNA.PPS.ln.allB.p05$intvl)
 ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#c00000") + geom_smooth(method="loess", formula=y~x, fill = "#FB9A99", color = "#E31A1C") + 
@@ -1556,13 +1376,7 @@ ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#c00000") + geom_smooth(method="loess", formula=y~x, fill = "#FB9A99", color = "#E31A1C") + 
 	theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-"#A6CEE3", "#1F78B4", "#002060"
-"#FB9A99", "#E31A1C", "#c00000"
-"#CAB2D6", "#6A3D9A", "#4f216d"
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 检验是否与0有显著差异
+# t.test difference significance between drhos and 0
 ttest.drho.intvls.PPS.ln.allB.p05 <- as.data.frame(t.test(drho.intvls.PPS.ln.allB.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.PPS.ln.allB.p05))
 {
@@ -1583,350 +1397,11 @@ for (i in 3:ncol(drho.intvls.Moisture.ln.allB.p05))
 }
 rownames(ttest.drho.intvls.Moisture.ln.allB.p05) <- 2:(nrow(ttest.drho.intvls.Moisture.ln.allB.p05)+1)
 
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 计算网络参数
-netwk.properties <- function(inputedgelsls)
-{
-	temp.properties <- matrix(data = NA, nrow=0, ncol = 10)
-	for (i in 1:length(inputedgelsls))
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			temp.graph <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]),directed = FALSE)
-			tempdf <- t(as.data.frame(c(length(V(temp.graph)),
-				nrow(inputedgelsls[[i]]),
-				edge_density(temp.graph),
-				transitivity(temp.graph, type="global"),
-				diameter(temp.graph, directed=F, weights=NA),
-				mean_distance(temp.graph, directed=F),
-				centr_degree(temp.graph)$centralization,
-				centr_clo(temp.graph, mode="all", normalized=T)$centralization,
-				centr_eigen(temp.graph, directed=F, normalized=T)$centralization,
-				centr_betw(temp.graph, directed=F, normalized=T)$centralization)))
-			temp.properties <- rbind(temp.properties, tempdf)
-		}
-		else 
-		{
-			temp.properties <- rbind(temp.properties, NA)
-		}
-	}
-	colnames(temp.properties) <- c("Nnode","Nedge","edge_density","transitivity","diameter","mean_distance","centr_degree","centr_clo","centr_eigen","centr_betw")
-	rownames(temp.properties) <- 1:nrow(temp.properties)
-	temp.properties
-}
-
+# calculate network properties from a list of edgelist
 ntwprop.edgels.intvls.PPS.ln.allB.p05 <- netwk.properties(edgels.intvls.PPS.ln.allB.p05)
 ntwprop.edgels.intvls.Moisture.ln.allB.p05 <- netwk.properties(edgels.intvls.Moisture.ln.allB.p05)
 
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 计算网络距离和画图
-# 用Schieber et al的方法计算dissimilarity。
-########################    Schieber et al. network dissimilarity
-# https://github.com/tischieber/Quantifying-Network-Structural-Dissimilarities
-
-# 注意，在alpha函数中调用degree的时候会出错，因为igraph和sna包中都有degree函数。
-# 正确的调用应该是igraph包中的，如果错误调用了sna包中的degree，会显示出错信息
-
-# 那一串代码已经输入，这里不再赘述
-
-# 1. 之前比较的都是edgelist。所以首先把edgelist变成graph
-
-edgelsls2gls <- function(inputedgelsls)
-	{
-	templslen <- length(inputedgelsls)
-	tempgls <- list(NULL)
-	for (i in 1:templslen)
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			if(nrow((inputedgelsls[[i]])) != 0)
-			{tempgls[[i]] <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]), directed = FALSE)}
-			else
-			{tempgls[[i]] <- NA}
-		}
-		else
-		{tempgls[[i]] <- NA}
-	}
-	tempgls
-	}
-
-# 两两比较，然后放在事先设置好的矩阵的相应位置
-gls2ddf <- function(inputgls)
-	{
-	templslen <- length(inputgls)
-	tempmtr <- matrix(nrow = templslen, ncol = templslen)
-	for (i in templslen:2)
-	{
-		# dvalues2 <- vector(length = 0)
-		for (j in 1:(i-1))
-		{
-			if(all(!is.na(inputgls[[i]])&!is.na(inputgls[[j]])))
-			# if(!is.na(inputgls[[i]])&!is.na(inputgls[[j]]))   # 天知道这里为什么会出现10个TRUE，导致报错
-			{tempmtr[i,j] <- d(inputgls[[i]], inputgls[[j]],0.45,0.45,0.1)}
-			else
-			{tempmtr[i,j] <- NA}
-		}
-		# dvalues <- append(dvalues, dvalues2)
-		print(paste("######", templslen-i+1, "out of", templslen, "######", sep = " "))
-	}
-	tempdf <- as.data.frame(tempmtr)
-	colnames(tempdf) <- names(inputgls);rownames(tempdf) <- names(inputgls)
-	tempdf
-	}
-
-# 画NMDS图
-ddf2NMDSplot <- function(inputddf){
-	temp.ddf.symm <- as.matrix(stats::as.dist(inputddf))
-	# 这里去除有NA的行和列，逻辑是NA行中只有对角线上的0不是NA，所以先计算非NA值，然后去掉非NA值为1的行或列
-	nonNArow <- rowSums(!is.na(temp.ddf.symm))!=1
-	nonNAcol <- colSums(!is.na(temp.ddf.symm))!=1
-	temp.ddf.symm <- temp.ddf.symm[nonNArow,]
-	temp.ddf.symm <- temp.ddf.symm[,nonNAcol]
-	temp.ddf.NMDS <- metaMDS(temp.ddf.symm)
-	temp.ddf.NMDSscore <- as.data.frame(scores(temp.ddf.NMDS))
-	temp.ddf.NMDSscore$intvls <- as.numeric(rownames(temp.ddf.symm))
-
-	tempg <- ggplot(temp.ddf.NMDSscore, aes(x=NMDS1, y=NMDS2, color = intvls)) + 
-		geom_point()
-	tempg
-}
-
-gls.intvls.PPS.ln.allB.p05 <- edgelsls2gls(edgels.intvls.PPS.ln.allB.p05)
-gls.intvls.Moisture.ln.allB.p05 <- edgelsls2gls(edgels.intvls.Moisture.ln.allB.p05)
-
-ddf.intvls.PPS.ln.allB.p05 <- gls2ddf(gls.intvls.PPS.ln.allB.p05)
-ddf.intvls.Moisture.ln.allB.p05 <- gls2ddf(gls.intvls.Moisture.ln.allB.p05)
-
-colnames(ddf.intvls.PPS.ln.allB.p05) <- 1:ncol(ddf.intvls.PPS.ln.allB.p05);rownames(ddf.intvls.PPS.ln.allB.p05) <- 1:nrow(ddf.intvls.PPS.ln.allB.p05)
-colnames(ddf.intvls.Moisture.ln.allB.p05) <- 1:ncol(ddf.intvls.Moisture.ln.allB.p05);rownames(ddf.intvls.Moisture.ln.allB.p05) <- 1:nrow(ddf.intvls.Moisture.ln.allB.p05)
-
-NMDSplot.intvls.PPS.ln.allB.p05 <- ddf2NMDSplot(ddf.intvls.PPS.ln.allB.p05)
-NMDSplot.intvls.Moisture.ln.allB.p05 <- ddf2NMDSplot(ddf.intvls.Moisture.ln.allB.p05)
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 计算网络rho的分布
-
-mergerho.intvls.PPS.ln.allB.p05 <- merge.rho(edgels.intvls.PPS.ln.allB.p05)
-mergerho.intvls.Moisture.ln.allB.p05 <- merge.rho(edgels.intvls.Moisture.ln.allB.p05)
-
-mergerho.intvls.PPS.ln.allB.p05$rho.count <- rowSums(!is.na(mergerho.intvls.PPS.ln.allB.p05[,3:12]))
-mergerho.intvls.Moisture.ln.allB.p05$rho.count <- rowSums(!is.na(mergerho.intvls.Moisture.ln.allB.p05[,3:12]))
-
-colnames(mergerho.intvls.PPS.ln.allB.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.Moisture.ln.allB.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-
-melt.mergerho.intvls.PPS.ln.allB.p05 <- melt(mergerho.intvls.PPS.ln.allB.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.Moisture.ln.allB.p05 <- melt(mergerho.intvls.Moisture.ln.allB.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-
-melt.mergerho.intvls.Moisture.ln.allB.p05$value <- as.numeric(melt.mergerho.intvls.Moisture.ln.allB.p05$value)
-melt.mergerho.intvls.PPS.ln.allB.p05$value <- as.numeric(melt.mergerho.intvls.PPS.ln.allB.p05$value)
-
-ggplot(melt.mergerho.intvls.PPS.ln.allB.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.Moisture.ln.allB.p05, aes(x=variable, y=value)) +
-  geom_point()
-
-
-mergerho.intvls2PosNegPercent <- function(inputmergerho){
-	tempPos <- colSums(apply(inputmergerho,2,as.numeric)>0, na.rm=TRUE)
-	tempNeg <- colSums(apply(inputmergerho,2,as.numeric)<0, na.rm=TRUE)
-	tempsum <- tempPos+tempNeg
-	tempPosPercent <- tempPos/tempsum
-	tempNegPercent <- tempNeg/tempsum
-	tempdf <- data.frame(tempPos, tempNeg, tempsum, tempPosPercent, tempNegPercent)
-	tempdf
-}
-
-mergerho.intvls2PosNegPercent(mergerho.intvls.PPS.ln.allB.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.Moisture.ln.allB.p05[,3:12])
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 第二部分是群落区间数据
-# 这是群落数据
-intvls.PPS.ln.allB
-intvls.Moisture.ln.allB
-# 这是环境区间数据
-env.intvls.PPS.ln.allB <- F.intervals(min(sample_data(ps.PPS.ln.allB)),max(sample_data(ps.PPS.ln.allB)),10,0.3)
-env.intvls.Moisture.ln.allB <- F.intervals(min(sample_data(ps.Moisture.ln.allB)),max(sample_data(ps.Moisture.ln.allB)),10,0.3)
-
-
-# 第三部分是rho数据，从merge.rho处开始
-
-mergerho.intvls.PPS.ln.allB.p05 <- merge.rho(edgels.intvls.PPS.ln.allB.p05)
-mergerho.intvls.Moisture.ln.allB.p05 <- merge.rho(edgels.intvls.Moisture.ln.allB.p05)
-
-env.intvls.PPS.ln.allB <- F.intervals(min(sample_data(ps.PPS.ln.allB)),max(sample_data(ps.PPS.ln.allB)),10,0.3)
-env.intvls.Moisture.ln.allB <- F.intervals(min(sample_data(ps.Moisture.ln.allB)),max(sample_data(ps.Moisture.ln.allB)),10,0.3)
-
-
-
-# 4、drho/dgradient
-# 计算drho，按行来逐个判断：
-# 首先判断第一列是否NA，如果NA，则进入下一列
-# 如果不是NA，则记录该值a，记录列值m，然后进入下一列
-# 下一列如果是NA，则进入下一列
-# 下一列如果不是NA，则记录该值b，记录列值n，计算(b-a)/(n-m)，
-
-
-drho <- function(inputmergerho)
-{
-	tempdf <- inputmergerho[,3:(dim(inputmergerho)[2]-1)]
-	tempdrho <- matrix(data=NA, nrow=dim(tempdf)[1], ncol=dim(tempdf)[2])
-	for (i in 1:dim(tempdf)[1])
-	{
-		temprhos <- as.numeric(tempdf[i,])
-		temppos <- which(!is.na(temprhos))
-		for (j in 2:length(temppos))
-		{
-			tempdrho[i, (temppos[j])] <- (temprhos[temppos[j]]-temprhos[temppos[j-1]])/(temppos[j]-temppos[j-1])
-		}
-	}
-	tempdrho
-}
-
-# intvls.ln
-mergerho.intvls.PPS.ln.allB.p05.fltr <- mergerho.intvls.PPS.ln.allB.p05[mergerho.intvls.PPS.ln.allB.p05[,"rho.count"]>1,]
-mergerho.intvls.Moisture.ln.allB.p05.fltr <- mergerho.intvls.Moisture.ln.allB.p05[mergerho.intvls.Moisture.ln.allB.p05[,"rho.count"]>1,]
-
-drho.intvls.PPS.ln.allB.p05 <- drho(mergerho.intvls.PPS.ln.allB.p05.fltr)
-drho.intvls.Moisture.ln.allB.p05 <- drho(mergerho.intvls.Moisture.ln.allB.p05.fltr)
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-# 顺便，计算出各网络中，出现次数大于等于5的core 列表
-mergerho.intvls.PPS.ln.allB.p05.core <- mergerho.intvls.PPS.ln.allB.p05[mergerho.intvls.PPS.ln.allB.p05[,"rho.count"]>4,]
-mergerho.intvls.Moisture.ln.allB.p05.core <- mergerho.intvls.Moisture.ln.allB.p05[mergerho.intvls.Moisture.ln.allB.p05[,"rho.count"]>4,]
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-################画图
-
-# intvls.ln
-drho.intvls.NNA.PPS.ln.allB.p05 <- melt(drho.intvls.PPS.ln.allB.p05)
-colnames(drho.intvls.NNA.PPS.ln.allB.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.PPS.ln.allB.p05 <- drho.intvls.NNA.PPS.ln.allB.p05[!is.na(drho.intvls.NNA.PPS.ln.allB.p05$drho),]
-drho.intvls.NNA.PPS.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.PPS.ln.allB.p05$intvl)
-
-drho.intvls.NNA.Moisture.ln.allB.p05 <- melt(drho.intvls.Moisture.ln.allB.p05)
-colnames(drho.intvls.NNA.Moisture.ln.allB.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.Moisture.ln.allB.p05 <- drho.intvls.NNA.Moisture.ln.allB.p05[!is.na(drho.intvls.NNA.Moisture.ln.allB.p05$drho),]
-drho.intvls.NNA.Moisture.ln.allB.p05$intvl <- as.character(drho.intvls.NNA.Moisture.ln.allB.p05$intvl)
-
-ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.PPS.ln.allB.p05, aes(x=factor(intvl, level=c("2","5","6","7","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.Moisture.ln.allB.p05, aes(x=factor(intvl, level=c("2","7","8","9","10")), y=drho)) + geom_boxplot()
-
-# 检验是否与0有显著差异
-ttest.drho.intvls.PPS.ln.allB.p05 <- as.data.frame(t.test(drho.intvls.PPS.ln.allB.p05[,2], mu = 0)[c(2,3,5,6,7)])
-for (i in 3:ncol(drho.intvls.PPS.ln.allB.p05))
-{
-	if (sum(!is.na(drho.intvls.PPS.ln.allB.p05[,i])) > 1) # t.test要求至少有2个数值
-	{ttest.drho.intvls.PPS.ln.allB.p05 <- rbind(ttest.drho.intvls.PPS.ln.allB.p05, as.data.frame(t.test(drho.intvls.PPS.ln.allB.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
-	else 
-	{ttest.drho.intvls.PPS.ln.allB.p05 <- rbind(ttest.drho.intvls.PPS.ln.allB.p05, NA)}
-}
-rownames(ttest.drho.intvls.PPS.ln.allB.p05) <- 2:(nrow(ttest.drho.intvls.PPS.ln.allB.p05)+1)
-
-ttest.drho.intvls.Moisture.ln.allB.p05 <- as.data.frame(t.test(drho.intvls.Moisture.ln.allB.p05[,2], mu = 0)[c(2,3,5,6,7)])
-for (i in 3:ncol(drho.intvls.Moisture.ln.allB.p05))
-{
-	if (sum(!is.na(drho.intvls.Moisture.ln.allB.p05[,i])) > 1) # t.test要求至少有2个数值
-	{ttest.drho.intvls.Moisture.ln.allB.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allB.p05, as.data.frame(t.test(drho.intvls.Moisture.ln.allB.p05[,i], mu = 0)[c(2,3,5,6,7)]))}
-	else 
-	{ttest.drho.intvls.Moisture.ln.allB.p05 <- rbind(ttest.drho.intvls.Moisture.ln.allB.p05, NA)}
-}
-rownames(ttest.drho.intvls.Moisture.ln.allB.p05) <- 2:(nrow(ttest.drho.intvls.Moisture.ln.allB.p05)+1)
-
-
-# 计算网络参数
-netwk.properties <- function(inputedgelsls)
-{
-	temp.properties <- matrix(data = NA, nrow=0, ncol = 10)
-	for (i in 1:length(inputedgelsls))
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			temp.graph <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]),directed = FALSE)
-			tempdf <- t(as.data.frame(c(length(V(temp.graph)),
-				nrow(inputedgelsls[[i]]),
-				edge_density(temp.graph),
-				transitivity(temp.graph, type="global"),
-				diameter(temp.graph, directed=F, weights=NA),
-				mean_distance(temp.graph, directed=F),
-				centr_degree(temp.graph)$centralization,
-				centr_clo(temp.graph, mode="all", normalized=T)$centralization,
-				centr_eigen(temp.graph, directed=F, normalized=T)$centralization,
-				centr_betw(temp.graph, directed=F, normalized=T)$centralization)))
-			temp.properties <- rbind(temp.properties, tempdf)
-		}
-		else 
-		{
-			temp.properties <- rbind(temp.properties, NA)
-		}
-	}
-	colnames(temp.properties) <- c("Nnode","Nedge","edge_density","transitivity","diameter","mean_distance","centr_degree","centr_clo","centr_eigen","centr_betw")
-	rownames(temp.properties) <- 1:nrow(temp.properties)
-	temp.properties
-}
-
-ntwprop.edgels.intvls.PPS.ln.allB.p05 <- netwk.properties(edgels.intvls.PPS.ln.allB.p05)
-ntwprop.edgels.intvls.Moisture.ln.allB.p05 <- netwk.properties(edgels.intvls.Moisture.ln.allB.p05)
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-
-
-
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
-
-
-
-
-
-
-############################################allF windowed
-
-library(ShortRead)
-library(Biostrings)
-library(phyloseq)
-library(vegan)
-library(ecodist)
-library(igraph)
-library(ggplot2)
-library(bipartite)
-library(reshape2)
-library(ggpubr)
-library(grid)
-library(gridExtra)
-
-setwd("C:/Users/Administrator/Nutstore/1/我的坚果云/_ZhJproject-Pamir/0.3Rdata")
-load("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# intvls.TN.ln.allF
-# intvls.Moisture.ln.allF
-# intvls.TOM.ln.allF
-# intvls.SSalt.ln.allF
-# intvls.AN.ln.allF
-
-library(doParallel)
-library(parallel)
-library(foreach)
-registerDoParallel(2)
+## fungal dataset
 
 edgels.intvls.TN.ln.allF <- list(NULL)
     for (i in 1:length(intvls.TN.ln.allF))
@@ -1936,7 +1411,6 @@ edgels.intvls.TN.ln.allF <- list(NULL)
 		else
 		{edgels.intvls.TN.ln.allF[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.TN.ln.allF),"##########", sep = " "))}
-
 edgels.intvls.Moisture.ln.allF <- list(NULL)
     for (i in 1:length(intvls.Moisture.ln.allF))
 	{
@@ -1945,7 +1419,6 @@ edgels.intvls.Moisture.ln.allF <- list(NULL)
 		else
 		{edgels.intvls.Moisture.ln.allF[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.Moisture.ln.allF),"##########", sep = " "))}
-
 edgels.intvls.TOM.ln.allF <- list(NULL)
     for (i in 1:length(intvls.TOM.ln.allF))
 	{
@@ -1954,7 +1427,6 @@ edgels.intvls.TOM.ln.allF <- list(NULL)
 		else
 		{edgels.intvls.TOM.ln.allF[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.TOM.ln.allF),"##########", sep = " "))}
-
 edgels.intvls.SSalt.ln.allF <- list(NULL)
     for (i in 1:length(intvls.SSalt.ln.allF))
 	{
@@ -1963,7 +1435,6 @@ edgels.intvls.SSalt.ln.allF <- list(NULL)
 		else
 		{edgels.intvls.SSalt.ln.allF[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.SSalt.ln.allF),"##########", sep = " "))}
-
 edgels.intvls.AN.ln.allF <- list(NULL)
     for (i in 1:length(intvls.AN.ln.allF))
 	{
@@ -1972,60 +1443,6 @@ edgels.intvls.AN.ln.allF <- list(NULL)
 		else
 		{edgels.intvls.AN.ln.allF[[i]] <- 0}
 	print(paste("##########",i, "out of", length(intvls.AN.ln.allF),"##########", sep = " "))}
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# intvls.ln
-# p<0.001
-edgels.intvls.TN.ln.allF.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.TN.ln.allF))
-	{
-		if (!is.numeric(edgels.intvls.TN.ln.allF[[i]]))
-		{edgels.intvls.TN.ln.allF.p001[[i]] <- as.data.frame(edgels.intvls.TN.ln.allF[[i]])[edgels.intvls.TN.ln.allF[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.TN.ln.allF.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.TN.ln.allF.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.Moisture.ln.allF.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.Moisture.ln.allF))
-	{
-		if (!is.numeric(edgels.intvls.Moisture.ln.allF[[i]]))
-		{edgels.intvls.Moisture.ln.allF.p001[[i]] <- as.data.frame(edgels.intvls.Moisture.ln.allF[[i]])[edgels.intvls.Moisture.ln.allF[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.Moisture.ln.allF.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.Moisture.ln.allF.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.TOM.ln.allF.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.TOM.ln.allF))
-	{
-		if (!is.numeric(edgels.intvls.TOM.ln.allF[[i]]))
-		{edgels.intvls.TOM.ln.allF.p001[[i]] <- as.data.frame(edgels.intvls.TOM.ln.allF[[i]])[edgels.intvls.TOM.ln.allF[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.TOM.ln.allF.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.TOM.ln.allF.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.SSalt.ln.allF.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.SSalt.ln.allF))
-	{
-		if (!is.numeric(edgels.intvls.SSalt.ln.allF[[i]]))
-		{edgels.intvls.SSalt.ln.allF.p001[[i]] <- as.data.frame(edgels.intvls.SSalt.ln.allF[[i]])[edgels.intvls.SSalt.ln.allF[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.SSalt.ln.allF.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.SSalt.ln.allF.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
-
-edgels.intvls.AN.ln.allF.p001 <- list(NULL)
-for (i in 1:length(edgels.intvls.AN.ln.allF))
-	{
-		if (!is.numeric(edgels.intvls.AN.ln.allF[[i]]))
-		{edgels.intvls.AN.ln.allF.p001[[i]] <- as.data.frame(edgels.intvls.AN.ln.allF[[i]])[edgels.intvls.AN.ln.allF[[i]][,"p.value"]<0.001,]}
-		else
-		{edgels.intvls.AN.ln.allF.p001[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
-		colnames(edgels.intvls.AN.ln.allF.p001[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
-	}
 
 # p<0.05
 edgels.intvls.TN.ln.allF.p05 <- list(NULL)
@@ -2037,7 +1454,6 @@ for (i in 1:length(edgels.intvls.TN.ln.allF))
 		{edgels.intvls.TN.ln.allF.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.TN.ln.allF.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.Moisture.ln.allF.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.Moisture.ln.allF))
 	{
@@ -2047,7 +1463,6 @@ for (i in 1:length(edgels.intvls.Moisture.ln.allF))
 		{edgels.intvls.Moisture.ln.allF.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.Moisture.ln.allF.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.TOM.ln.allF.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.TOM.ln.allF))
 	{
@@ -2057,7 +1472,6 @@ for (i in 1:length(edgels.intvls.TOM.ln.allF))
 		{edgels.intvls.TOM.ln.allF.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.TOM.ln.allF.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.SSalt.ln.allF.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.SSalt.ln.allF))
 	{
@@ -2067,7 +1481,6 @@ for (i in 1:length(edgels.intvls.SSalt.ln.allF))
 		{edgels.intvls.SSalt.ln.allF.p05[[i]] <- matrix(data = NA, ncol = 6, nrow = 0)
 		colnames(edgels.intvls.SSalt.ln.allF.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
-
 edgels.intvls.AN.ln.allF.p05 <- list(NULL)
 for (i in 1:length(edgels.intvls.AN.ln.allF))
 	{
@@ -2078,57 +1491,19 @@ for (i in 1:length(edgels.intvls.AN.ln.allF))
 		colnames(edgels.intvls.AN.ln.allF.p05[[i]])<-c("ASV1","ASV2","rho","p.value","ab1","ab2")}
 	}
 
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-
-# 3、根据edge列merge各edgels$rho
-
 mergerho.intvls.TN.ln.allF.p05 <- merge.rho(edgels.intvls.TN.ln.allF.p05)
 mergerho.intvls.Moisture.ln.allF.p05 <- merge.rho(edgels.intvls.Moisture.ln.allF.p05)
 mergerho.intvls.TOM.ln.allF.p05 <- merge.rho(edgels.intvls.TOM.ln.allF.p05)
 mergerho.intvls.SSalt.ln.allF.p05 <- merge.rho(edgels.intvls.SSalt.ln.allF.p05)
 mergerho.intvls.AN.ln.allF.p05 <- merge.rho(edgels.intvls.AN.ln.allF.p05)
 
-# 计算rho（即NA）出现的次数，过滤掉只出现一次的
+# count times of rho occurred, and remove edges only formed once among all networks (rho.count = 1)
 mergerho.intvls.TN.ln.allF.p05$rho.count <- rowSums(!is.na(mergerho.intvls.TN.ln.allF.p05[,3:12]))
 mergerho.intvls.Moisture.ln.allF.p05$rho.count <- rowSums(!is.na(mergerho.intvls.Moisture.ln.allF.p05[,3:12]))
 mergerho.intvls.TOM.ln.allF.p05$rho.count <- rowSums(!is.na(mergerho.intvls.TOM.ln.allF.p05[,3:12]))
 mergerho.intvls.SSalt.ln.allF.p05$rho.count <- rowSums(!is.na(mergerho.intvls.SSalt.ln.allF.p05[,3:12]))
 mergerho.intvls.AN.ln.allF.p05$rho.count <- rowSums(!is.na(mergerho.intvls.AN.ln.allF.p05[,3:12]))
 
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# 4、drho/dgradient
-# 计算drho，按行来逐个判断：
-# 首先判断第一列是否NA，如果NA，则进入下一列
-# 如果不是NA，则记录该值a，记录列值m，然后进入下一列
-# 下一列如果是NA，则进入下一列
-# 下一列如果不是NA，则记录该值b，记录列值n，计算(b-a)/(n-m)，
-
-
-drho <- function(inputmergerho)
-{
-	tempdf <- inputmergerho[,3:(dim(inputmergerho)[2]-1)]
-	tempdrho <- matrix(data=NA, nrow=dim(tempdf)[1], ncol=dim(tempdf)[2])
-	for (i in 1:dim(tempdf)[1])
-	{
-		temprhos <- as.numeric(tempdf[i,])
-		temppos <- which(!is.na(temprhos))
-		for (j in 2:length(temppos))
-		{
-			tempdrho[i, (temppos[j])] <- (temprhos[temppos[j]]-temprhos[temppos[j-1]])/(temppos[j]-temppos[j-1])
-		}
-	}
-	tempdrho
-}
-
-# 将character转为numeric
-apply(mergerho.intvls.TN.ln.allF.p05.fltr, 2, function(x) as.numeric(x))
-
-# intvls.ln
 mergerho.intvls.TN.ln.allF.p05.fltr <- mergerho.intvls.TN.ln.allF.p05[mergerho.intvls.TN.ln.allF.p05[,"rho.count"]>1,]
 mergerho.intvls.Moisture.ln.allF.p05.fltr <- mergerho.intvls.Moisture.ln.allF.p05[mergerho.intvls.Moisture.ln.allF.p05[,"rho.count"]>1,]
 mergerho.intvls.TOM.ln.allF.p05.fltr <- mergerho.intvls.TOM.ln.allF.p05[mergerho.intvls.TOM.ln.allF.p05[,"rho.count"]>1,]
@@ -2141,57 +1516,15 @@ drho.intvls.TOM.ln.allF.p05 <- drho(mergerho.intvls.TOM.ln.allF.p05.fltr)
 drho.intvls.SSalt.ln.allF.p05 <- drho(mergerho.intvls.SSalt.ln.allF.p05.fltr)
 drho.intvls.AN.ln.allF.p05 <- drho(mergerho.intvls.AN.ln.allF.p05.fltr)
 
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# 顺便，计算出各网络中，出现次数大于等于5的core 列表
+# target core interactions present in 5 or more networks 
 mergerho.intvls.TN.ln.allF.p05.core <- mergerho.intvls.TN.ln.allF.p05[mergerho.intvls.TN.ln.allF.p05[,"rho.count"]>4,]
 mergerho.intvls.Moisture.ln.allF.p05.core <- mergerho.intvls.Moisture.ln.allF.p05[mergerho.intvls.Moisture.ln.allF.p05[,"rho.count"]>4,]
 mergerho.intvls.TOM.ln.allF.p05.core <- mergerho.intvls.TOM.ln.allF.p05[mergerho.intvls.TOM.ln.allF.p05[,"rho.count"]>4,]
 mergerho.intvls.SSalt.ln.allF.p05.core <- mergerho.intvls.SSalt.ln.allF.p05[mergerho.intvls.SSalt.ln.allF.p05[,"rho.count"]>4,]
 mergerho.intvls.AN.ln.allF.p05.core <- mergerho.intvls.AN.ln.allF.p05[mergerho.intvls.AN.ln.allF.p05[,"rho.count"]>4,]
 
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-################画图
-
+# ploting
 # intvls.ln
-drho.intvls.NNA.TN.ln.allF.p05 <- melt(drho.intvls.TN.ln.allF.p05)
-colnames(drho.intvls.NNA.TN.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.TN.ln.allF.p05 <- drho.intvls.NNA.TN.ln.allF.p05[!is.na(drho.intvls.NNA.TN.ln.allF.p05$drho),]
-drho.intvls.NNA.TN.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.TN.ln.allF.p05$intvl)
-
-drho.intvls.NNA.Moisture.ln.allF.p05 <- melt(drho.intvls.Moisture.ln.allF.p05)
-colnames(drho.intvls.NNA.Moisture.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.Moisture.ln.allF.p05 <- drho.intvls.NNA.Moisture.ln.allF.p05[!is.na(drho.intvls.NNA.Moisture.ln.allF.p05$drho),]
-drho.intvls.NNA.Moisture.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.Moisture.ln.allF.p05$intvl)
-
-drho.intvls.NNA.TOM.ln.allF.p05 <- melt(drho.intvls.TOM.ln.allF.p05)
-colnames(drho.intvls.NNA.TOM.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.TOM.ln.allF.p05 <- drho.intvls.NNA.TOM.ln.allF.p05[!is.na(drho.intvls.NNA.TOM.ln.allF.p05$drho),]
-drho.intvls.NNA.TOM.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.TOM.ln.allF.p05$intvl)
-
-drho.intvls.NNA.SSalt.ln.allF.p05 <- melt(drho.intvls.SSalt.ln.allF.p05)
-colnames(drho.intvls.NNA.SSalt.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.SSalt.ln.allF.p05 <- drho.intvls.NNA.SSalt.ln.allF.p05[!is.na(drho.intvls.NNA.SSalt.ln.allF.p05$drho),]
-drho.intvls.NNA.SSalt.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.SSalt.ln.allF.p05$intvl)
-
-drho.intvls.NNA.AN.ln.allF.p05 <- melt(drho.intvls.AN.ln.allF.p05)
-colnames(drho.intvls.NNA.AN.ln.allF.p05) <- c("trivial","intvl","drho")
-drho.intvls.NNA.AN.ln.allF.p05 <- drho.intvls.NNA.AN.ln.allF.p05[!is.na(drho.intvls.NNA.AN.ln.allF.p05$drho),]
-drho.intvls.NNA.AN.ln.allF.p05$intvl <- as.character(drho.intvls.NNA.AN.ln.allF.p05$intvl)
-
-ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x=factor(intvl, level=c("2","3","4","5","6","7","8","9")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.Moisture.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.Moisture.ln.allF.p05, aes(x=factor(intvl, level=c("2","5","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.TOM.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.TOM.ln.allF.p05, aes(x=factor(intvl, level=c("2","3","4","5","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.SSalt.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.SSalt.ln.allF.p05, aes(x=factor(intvl, level=c("2","3","4","6","7","8","9","10")), y=drho)) + geom_boxplot()
-ggplot(drho.intvls.NNA.AN.ln.allF.p05, aes(x = intvl, y = drho)) + geom_violin()
-ggplot(drho.intvls.NNA.AN.ln.allF.p05, aes(x=factor(intvl, level=c("2","3","4","5","6","7","8","9","10")), y=drho)) + geom_boxplot()
-
-
 drho.intvls.NNA.TN.ln.allF.p05$intvl <- as.numeric(drho.intvls.NNA.TN.ln.allF.p05$intvl)
 ggplot(drho.intvls.NNA.TN.ln.allF.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#4f216d") + geom_smooth(method="loess", formula=y~x, fill = "#CAB2D6", color = "#6A3D9A") + 
@@ -2217,13 +1550,7 @@ ggplot(drho.intvls.NNA.AN.ln.allF.p05, aes(x=intvl, y=drho)) +
 	geom_point(color = "#4f216d") + geom_smooth(method="loess", formula=y~x, fill = "#CAB2D6", color = "#6A3D9A") + 
 	theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
-"#A6CEE3", "#1F78B4", "#002060"
-"#FB9A99", "#E31A1C", "#c00000"
-"#CAB2D6", "#6A3D9A", "#4f216d"
-
-
-
-# 检验是否与0有显著差异
+# t.test difference significance between drhos and 0
 ttest.drho.intvls.TN.ln.allF.p05 <- as.data.frame(t.test(drho.intvls.TN.ln.allF.p05[,2], mu = 0)[c(2,3,5,6,7)])
 for (i in 3:ncol(drho.intvls.TN.ln.allF.p05))
 {
@@ -2274,362 +1601,12 @@ for (i in 3:ncol(drho.intvls.AN.ln.allF.p05))
 }
 rownames(ttest.drho.intvls.AN.ln.allF.p05) <- 2:(nrow(ttest.drho.intvls.AN.ln.allF.p05)+1)
 
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-
-# 计算网络参数
-netwk.properties <- function(inputedgelsls)
-{
-	temp.properties <- matrix(data = NA, nrow=0, ncol = 10)
-	for (i in 1:length(inputedgelsls))
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			temp.graph <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]),directed = FALSE)
-			tempdf <- t(as.data.frame(c(length(V(temp.graph)),
-				nrow(inputedgelsls[[i]]),
-				edge_density(temp.graph),
-				transitivity(temp.graph, type="global"),
-				diameter(temp.graph, directed=F, weights=NA),
-				mean_distance(temp.graph, directed=F),
-				centr_degree(temp.graph)$centralization,
-				centr_clo(temp.graph, mode="all", normalized=T)$centralization,
-				centr_eigen(temp.graph, directed=F, normalized=T)$centralization,
-				centr_betw(temp.graph, directed=F, normalized=T)$centralization)))
-			temp.properties <- rbind(temp.properties, tempdf)
-		}
-		else 
-		{
-			temp.properties <- rbind(temp.properties, NA)
-		}
-	}
-	colnames(temp.properties) <- c("Nnode","Nedge","edge_density","transitivity","diameter","mean_distance","centr_degree","centr_clo","centr_eigen","centr_betw")
-	rownames(temp.properties) <- 1:nrow(temp.properties)
-	temp.properties
-}
-
+# calculate network properties from a list of edgelist
 ntwprop.edgels.intvls.TN.ln.allF.p05 <- netwk.properties(edgels.intvls.TN.ln.allF.p05)
 ntwprop.edgels.intvls.Moisture.ln.allF.p05 <- netwk.properties(edgels.intvls.Moisture.ln.allF.p05)
 ntwprop.edgels.intvls.TOM.ln.allF.p05 <- netwk.properties(edgels.intvls.TOM.ln.allF.p05)
 ntwprop.edgels.intvls.SSalt.ln.allF.p05 <- netwk.properties(edgels.intvls.SSalt.ln.allF.p05)
 ntwprop.edgels.intvls.AN.ln.allF.p05 <- netwk.properties(edgels.intvls.AN.ln.allF.p05)
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# 计算网络距离和画图
-# 用Schieber et al的方法计算dissimilarity。
-########################    Schieber et al. network dissimilarity
-# https://github.com/tischieber/Quantifying-Network-Structural-Dissimilarities
-
-# 注意，在alpha函数中调用degree的时候会出错，因为igraph和sna包中都有degree函数。
-# 正确的调用应该是igraph包中的，如果错误调用了sna包中的degree，会显示出错信息
-
-
-library(igraph)
-library('Matrix')
-#library('MatrixStats')
-# Shannon entropy
-entropia<-function(a)
-{
-a<-a[which(a>0)];
--sum(a*log(a));
-}
-
-#returns the node distance matrix
-node_distance<-function(g){
-n<-length(V(g))
-if(n==1){
-retorno=1
-}
-if(n>1){
-a<-Matrix(0,nrow=n,ncol=n,sparse=TRUE)
-m<-shortest.paths(g,algorithm=c("unweighted"))
-m[which(m=="Inf")]<-n
-quem<-setdiff(intersect(m,m),0)
-for(j in (1:length(quem))){
-l<-which(m==quem[j])/n
-linhas<-floor(l)+1
-posicoesm1<-which(l==floor(l))
-if(length(posicoesm1)>0){
-linhas[posicoesm1]<-linhas[posicoesm1]-1
-}
-a[1:n,quem[j]]<-hist(linhas,plot=FALSE,breaks=(0:n))$counts
-}
-#m<-c()
-retorno=(a/(n-1))
-}
-return(retorno)
-}
-
-
-# nnd
-nnd<-function(g){
-N<-length(V(g))
-nd<-node_distance(g)
-pdfm<-colMeans(nd)
-norm<-log(max(c(2,length(which(pdfm[1:(N-1)]>0))+1)))
-return(c(pdfm,max(c(0,entropia(pdfm)-entropia(nd)/N))/norm))
-}
-
-#function
-alpha<-function(g){
-N<-length(V(g))
-r<-sort(alpha.centrality(g,exo=igraph::degree(g)/(N-1),alpha=1/N))/((N^2)) # degree有可能和sna::degree相冲突从而报错
-return(c(r,max(c(0,1-sum(r)))))
-}
-
-#function
-D<-function(g,h,w1,w2,w3){
-first<-0
-second<-0
-third<-0
-N<-length(V(g))
-M<-length(V(h))
-PM<-matrix(0,ncol=max(c(M,N)))
-if(w1+w2>0){
-pg=nnd(g)
-PM[1:(N-1)]=pg[1:(N-1)]
-PM[length(PM)]<-pg[N]
-ph=nnd(h)
-PM[1:(M-1)]=PM[1:(M-1)]+ph[1:(M-1)]
-PM[length(PM)]<-PM[length(PM)]+ph[M]
-PM<-PM/2
-first<-sqrt(max(c((entropia(PM)-(entropia(pg[1:N])+entropia(ph[1:M]))/2)/log(2),0)))
-second<-abs(sqrt(pg[N+1])-sqrt(ph[M+1]))
-}
-if(w3>0){
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))/2
-g<-graph.complementer(g)
-h<-graph.complementer(h)
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))/2
-}
-return(w1*first+w2*second+w3*third)
-}
-
-#function
-d<-function(g,h,w1,w2,w3){
-first<-0
-second<-0
-third<-0
-N<-length(V(g))
-M<-length(V(h))
-PM<-matrix(0,ncol=max(c(M,N)))
-if(w1+w2>0){
-pg=nnd(g)
-PM[1:(N-1)]=pg[1:(N-1)]
-PM[length(PM)]<-pg[N]
-ph=nnd(h)
-PM[1:(M-1)]=PM[1:(M-1)]+ph[1:(M-1)]
-PM[length(PM)]<-PM[length(PM)]+ph[M]
-PM<-PM/2
-first<-sqrt(max(c((entropia(PM)-(entropia(pg[1:N])+entropia(ph[1:M]))/2)/log(2),0)))
-second<-abs(sqrt(pg[N+1])-sqrt(ph[M+1]))
-}
-if(w3>0){
-pg<-alpha(g)
-ph<-alpha(h)
-m<-max(c(length(pg),length(ph)))
-Pg<-matrix(0,ncol=m)
-Ph<-matrix(0,ncol=m)
-Pg[(m-length(pg)+1):m]<-pg
-Ph[(m-length(ph)+1):m]<-ph
-third<-third+sqrt((entropia((Pg+Ph)/2)-(entropia(pg)+entropia(ph))/2)/log(2))
-}
-return(w1*first+w2*second+w3*third)
-}
-
-# 1. 之前比较的都是edgelist。所以首先把edgelist变成graph
-
-edgelsls2gls <- function(inputedgelsls)
-	{
-	templslen <- length(inputedgelsls)
-	tempgls <- list(NULL)
-	for (i in 1:templslen)
-	{
-		if (is.data.frame(inputedgelsls[[i]]))
-		{
-			if(nrow((inputedgelsls[[i]])) != 0)
-			{tempgls[[i]] <- graph_from_edgelist(as.matrix(inputedgelsls[[i]][,1:2]), directed = FALSE)}
-			else
-			{tempgls[[i]] <- NA}
-		}
-		else
-		{tempgls[[i]] <- NA}
-	}
-	tempgls
-	}
-
-# 两两比较，然后放在事先设置好的矩阵的相应位置
-gls2ddf <- function(inputgls)
-	{
-	templslen <- length(inputgls)
-	tempmtr <- matrix(nrow = templslen, ncol = templslen)
-	for (i in templslen:2)
-	{
-		# dvalues2 <- vector(length = 0)
-		for (j in 1:(i-1))
-		{
-			if(all(!is.na(inputgls[[i]])&!is.na(inputgls[[j]])))
-			# if(!is.na(inputgls[[i]])&!is.na(inputgls[[j]]))   # 天知道这里为什么会出现10个TRUE，导致报错
-			{tempmtr[i,j] <- d(inputgls[[i]], inputgls[[j]],0.45,0.45,0.1)}
-			else
-			{tempmtr[i,j] <- NA}
-		}
-		# dvalues <- append(dvalues, dvalues2)
-		print(paste("######", templslen-i+1, "out of", templslen, "######", sep = " "))
-	}
-	tempdf <- as.data.frame(tempmtr)
-	colnames(tempdf) <- names(inputgls);rownames(tempdf) <- names(inputgls)
-	tempdf
-	}
-
-# 画NMDS图
-ddf2NMDSplot <- function(inputddf){
-	temp.ddf.symm <- as.matrix(stats::as.dist(inputddf))
-	# 这里去除有NA的行和列，逻辑是NA行中只有对角线上的0不是NA，所以先计算非NA值，然后去掉非NA值为1的行或列
-	nonNArow <- rowSums(!is.na(temp.ddf.symm))!=1
-	nonNAcol <- colSums(!is.na(temp.ddf.symm))!=1
-	temp.ddf.symm <- temp.ddf.symm[nonNArow,]
-	temp.ddf.symm <- temp.ddf.symm[,nonNAcol]
-	temp.ddf.NMDS <- metaMDS(temp.ddf.symm)
-	temp.ddf.NMDSscore <- as.data.frame(scores(temp.ddf.NMDS))
-	temp.ddf.NMDSscore$intvls <- as.numeric(rownames(temp.ddf.symm))
-
-	tempg <- ggplot(temp.ddf.NMDSscore, aes(x=NMDS1, y=NMDS2, color = intvls)) + 
-		geom_point()
-	tempg
-}
-
-
-gls.intvls.TN.ln.allF.p05 <- edgelsls2gls(edgels.intvls.TN.ln.allF.p05)
-gls.intvls.Moisture.ln.allF.p05 <- edgelsls2gls(edgels.intvls.Moisture.ln.allF.p05)
-gls.intvls.TOM.ln.allF.p05 <- edgelsls2gls(edgels.intvls.TOM.ln.allF.p05)
-gls.intvls.SSalt.ln.allF.p05 <- edgelsls2gls(edgels.intvls.SSalt.ln.allF.p05)
-gls.intvls.AN.ln.allF.p05 <- edgelsls2gls(edgels.intvls.AN.ln.allF.p05)
-
-ddf.intvls.TN.ln.allF.p05 <- gls2ddf(gls.intvls.TN.ln.allF.p05)
-ddf.intvls.Moisture.ln.allF.p05 <- gls2ddf(gls.intvls.Moisture.ln.allF.p05)
-ddf.intvls.TOM.ln.allF.p05 <- gls2ddf(gls.intvls.TOM.ln.allF.p05)
-ddf.intvls.SSalt.ln.allF.p05 <- gls2ddf(gls.intvls.SSalt.ln.allF.p05)
-ddf.intvls.AN.ln.allF.p05 <- gls2ddf(gls.intvls.AN.ln.allF.p05)
-
-colnames(ddf.intvls.TN.ln.allF.p05) <- 1:ncol(ddf.intvls.TN.ln.allF.p05);rownames(ddf.intvls.TN.ln.allF.p05) <- 1:nrow(ddf.intvls.TN.ln.allF.p05)
-colnames(ddf.intvls.Moisture.ln.allF.p05) <- 1:ncol(ddf.intvls.Moisture.ln.allF.p05);rownames(ddf.intvls.Moisture.ln.allF.p05) <- 1:nrow(ddf.intvls.Moisture.ln.allF.p05)
-colnames(ddf.intvls.TOM.ln.allF.p05) <- 1:ncol(ddf.intvls.TOM.ln.allF.p05);rownames(ddf.intvls.TOM.ln.allF.p05) <- 1:nrow(ddf.intvls.TOM.ln.allF.p05)
-colnames(ddf.intvls.SSalt.ln.allF.p05) <- 1:ncol(ddf.intvls.SSalt.ln.allF.p05);rownames(ddf.intvls.SSalt.ln.allF.p05) <- 1:nrow(ddf.intvls.SSalt.ln.allF.p05)
-colnames(ddf.intvls.AN.ln.allF.p05) <- 1:ncol(ddf.intvls.AN.ln.allF.p05);rownames(ddf.intvls.AN.ln.allF.p05) <- 1:nrow(ddf.intvls.AN.ln.allF.p05)
-
-NMDSplot.intvls.TN.ln.allF.p05 <- ddf2NMDSplot(ddf.intvls.TN.ln.allF.p05)
-NMDSplot.intvls.Moisture.ln.allF.p05 <- ddf2NMDSplot(ddf.intvls.Moisture.ln.allF.p05)
-NMDSplot.intvls.TOM.ln.allF.p05 <- ddf2NMDSplot(ddf.intvls.TOM.ln.allF.p05)
-NMDSplot.intvls.SSalt.ln.allF.p05 <- ddf2NMDSplot(ddf.intvls.SSalt.ln.allF.p05)
-NMDSplot.intvls.AN.ln.allF.p05 <- ddf2NMDSplot(ddf.intvls.AN.ln.allF.p05)
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# 计算网络rho的分布
-edgels.intvls.TN.ln.allF.p05
-edgels.intvls.Moisture.ln.allF.p05
-edgels.intvls.TOM.ln.allF.p05
-edgels.intvls.SSalt.ln.allF.p05
-edgels.intvls.AN.ln.allF.p05
-
-mergerho.intvls.TN.ln.allF.p05 <- merge.rho(edgels.intvls.TN.ln.allF.p05)
-mergerho.intvls.Moisture.ln.allF.p05 <- merge.rho(edgels.intvls.Moisture.ln.allF.p05)
-mergerho.intvls.TOM.ln.allF.p05 <- merge.rho(edgels.intvls.TOM.ln.allF.p05)
-mergerho.intvls.SSalt.ln.allF.p05 <- merge.rho(edgels.intvls.SSalt.ln.allF.p05)
-mergerho.intvls.AN.ln.allF.p05 <- merge.rho(edgels.intvls.AN.ln.allF.p05)
-
-colnames(mergerho.intvls.TN.ln.allF.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.Moisture.ln.allF.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.TOM.ln.allF.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.SSalt.ln.allF.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-colnames(mergerho.intvls.AN.ln.allF.p05) <- c("ASV1","ASV2","intvl1","intvl2","intvl3","intvl4","intvl5","intvl6","intvl7","intvl8","intvl9","intvl10","rho.count")
-
-melt.mergerho.intvls.TN.ln.allF.p05 <- melt(mergerho.intvls.TN.ln.allF.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.Moisture.ln.allF.p05 <- melt(mergerho.intvls.Moisture.ln.allF.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.TOM.ln.allF.p05 <- melt(mergerho.intvls.TOM.ln.allF.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.SSalt.ln.allF.p05 <- melt(mergerho.intvls.SSalt.ln.allF.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-melt.mergerho.intvls.AN.ln.allF.p05 <- melt(mergerho.intvls.AN.ln.allF.p05[,1:12], id = c("ASV1","ASV2"), na.rm=TRUE)
-
-melt.mergerho.intvls.TN.ln.allF.p05$value <- as.numeric(melt.mergerho.intvls.TN.ln.allF.p05$value)
-melt.mergerho.intvls.Moisture.ln.allF.p05$value <- as.numeric(melt.mergerho.intvls.Moisture.ln.allF.p05$value)
-melt.mergerho.intvls.TOM.ln.allF.p05$value <- as.numeric(melt.mergerho.intvls.TOM.ln.allF.p05$value)
-melt.mergerho.intvls.SSalt.ln.allF.p05$value <- as.numeric(melt.mergerho.intvls.SSalt.ln.allF.p05$value)
-melt.mergerho.intvls.AN.ln.allF.p05$value <- as.numeric(melt.mergerho.intvls.AN.ln.allF.p05$value)
-
-ggplot(melt.mergerho.intvls.TN.ln.allF.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.Moisture.ln.allF.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.TOM.ln.allF.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.SSalt.ln.allF.p05, aes(x=variable, y=value)) +
-  geom_point()
-ggplot(melt.mergerho.intvls.AN.ln.allF.p05, aes(x=variable, y=value)) +
-  geom_point()
-
-# ggplot(melt.mergerho.intvls.TN.ln.allF.p05, aes(x=variable, y=value)) +
-#   geom_point() +
-#   geom_smooth(method=lm , color="red", fill="#69b3a2", se=TRUE) +
-#   theme_ipsum()
-
-
-mergerho.intvls2PosNegPercent <- function(inputmergerho){
-	tempPos <- colSums(apply(inputmergerho,2,as.numeric)>0, na.rm=TRUE)
-	tempNeg <- colSums(apply(inputmergerho,2,as.numeric)<0, na.rm=TRUE)
-	tempsum <- tempPos+tempNeg
-	tempPosPercent <- tempPos/tempsum
-	tempNegPercent <- tempNeg/tempsum
-	tempdf <- data.frame(tempPos, tempNeg, tempsum, tempPosPercent, tempNegPercent)
-	tempdf
-}
-
-mergerho.intvls2PosNegPercent(mergerho.intvls.TN.ln.allF.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.Moisture.ln.allF.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.TOM.ln.allF.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.SSalt.ln.allF.p05[,3:12])
-mergerho.intvls2PosNegPercent(mergerho.intvls.AN.ln.allF.p05[,3:12])
-
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-# 第二部分是群落区间数据
-# 这是群落数据
-intvls.TN.ln.allF
-intvls.Moisture.ln.allF
-intvls.TOM.ln.allF
-intvls.SSalt.ln.allF
-intvls.AN.ln.allF
-# 这是环境区间数据
-env.intvls.TN.ln.allF <- F.intervals(min(sample_data(ps.TN.ln.allF)),max(sample_data(ps.TN.ln.allF)),10,0.3)
-env.intvls.Moisture.ln.allF <- F.intervals(min(sample_data(ps.Moisture.ln.allF)),max(sample_data(ps.Moisture.ln.allF)),10,0.3)
-env.intvls.TOM.ln.allF <- F.intervals(min(sample_data(ps.TOM.ln.allF)),max(sample_data(ps.TOM.ln.allF)),10,0.3)
-env.intvls.SSalt.ln.allF <- F.intervals(min(sample_data(ps.SSalt.ln.allF)),max(sample_data(ps.SSalt.ln.allF)),10,0.3)
-env.intvls.AN.ln.allF <- F.intervals(min(sample_data(ps.AN.ln.allF)),max(sample_data(ps.AN.ln.allF)),10,0.3)
-
-
-
-
-
-
-
-
 
 
 
