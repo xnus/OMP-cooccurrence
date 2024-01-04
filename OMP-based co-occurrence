@@ -10,7 +10,7 @@ library(doParallel)
 library(parallel)
 library(foreach)
 
-
+###### OMP based co-occurrence analysis
 # Input dataframe of community data, target the abundance data of co-exsited taxon pairs, then calculate edge properties with cor.test
 df2edge.bi.mod <- function(inputdf) 
 	{
@@ -52,6 +52,55 @@ df2edge.bi.mod <- function(inputdf)
 	results
 	}
 
+ps2edgels.bi <- function(inputps)
+	{
+	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
+	colnames(tempdf) <- as.data.frame(tax_table(inputps))[,dim(tax_table(inputps))[2]]
+	tempedgels <- df2edge.bi.mod(tempdf)
+	tempedgels
+	}
+
+###### non-OMP based co-occurrence analysis
+# Input dataframe of community data,and calculate edge properties with cor.test
+df2edge <- function(inputdf) 
+	{
+	results<-matrix(nrow=0,ncol=6)
+	for (i in 1:(dim(inputdf)[2]-1))
+		{
+		for (j in (i+1):dim(inputdf)[2])
+			{
+			species1.ab<-sum(inputdf[,i])
+			species2.ab<-sum(inputdf[,j])
+			if(species1.ab > 0 & species2.ab > 0)
+				{
+				test<-cor.test(inputdf[, i],inputdf[, j],method="spearman",na.action=na.rm)
+				rho<-as.numeric(test$estimate)
+				p.value<-as.numeric(test$p.value)
+				}		
+			if(species1.ab == 0 | species2.ab == 0)
+				{
+				rho<-0
+				p.value<-1
+				}
+			new.row<-c(colnames(inputdf)[i],colnames(inputdf)[j],rho,p.value,species1.ab,species2.ab)
+			results<-rbind(results,new.row)		
+			}
+			print(paste(i, "out of", dim(inputdf)[2], sep = " "))
+		}
+	results <- as.data.frame(results)
+	colnames(results)<-c("ASV1","ASV2","rho","p.value","ab1","ab2")
+	results
+	}
+
+
+ps2edgels <- function(inputps, inputp, inputrhoupper, inputrhobtm)
+	{
+	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
+	tempedgels <- df2edge(tempdf)
+	tempedgels <- edgefltr(tempedgels, inputp, inputrhoupper, inputrhobtm)
+	tempedgels
+	}
+
 # set rho and p thresholds to filter edge list 
 edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
 	{
@@ -59,13 +108,5 @@ edgefltr <- function(inputedgelst, inputp, inputrhoupper, inputrhobtm)
 	edgelstemp <- edgelstemp[edgelstemp[,"p.value"] < inputp,]
 	edgelstemp <- edgelstemp[edgelstemp[,"rho"] < inputrhobtm|edgelstemp[,"rho"] > inputrhoupper,]
 	edgelstemp
-	}
-
-ps2edgels.bi <- function(inputps)
-	{
-	tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
-	colnames(tempdf) <- as.data.frame(tax_table(inputps))[,dim(tax_table(inputps))[2]]
-	tempedgels <- df2edge.bi.mod(tempdf)
-	tempedgels
 	}
 
