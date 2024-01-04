@@ -306,22 +306,18 @@ plotCoreDataCombine(CoreDataCombine.TierNCorepslsls.allF.0.100, "#6A3D9A", "#CAB
 ############### correlation among environmental factors ##################################
 ##########################################################################################
 
-env.unique <- comb.samdf[, !colnames(comb.samdf) %in% c("Location","Replicates","Samples","Latitude","Longitude")]
+env.unique <- comb.samdf[, !colnames(comb.samdf) %in% c("Location","Replicates","Samples","Latitude","Longitude", "SampID")]
 env.unique <- env.unique[, !colnames(env.unique) %in% c("Mean.Temperature.of.Warmest.Quarter", "Mean.Temperature.of.Coldest.Quarter", "Precipitation.of.Wettest.Month", "Precipitation.of.Driest.Month", "Precipitation.of.Wettest.Quarter", "Precipitation.of.Driest.Quarter", "Precipitation.of.Warmest.Quarter", "Precipitation.of.Coldest.Quarter", "Max.Temperature.of.Warmest.Month", "Min.Temperature.of.Coldest.Month", "Temperature.Annual.Range", "Mean.Temperature.of.Wettest.Quarter", "Mean.Temperature.of.Driest.Quarter", "January", "February", "March", "April", "May", "August", "September", "October", "November", "December", "Range")]
 env.unique <- env.unique[, !colnames(env.unique) %in% c("UV","Temp","Mean.Diurnal.Range","Isothermality","Elevation","Max","Min")]
 
-# remove duplicated rows
 env.unique <- env.unique[!duplicated(env.unique),]
 
-# 环境变量之间的Pearson线性相关系数r
 env.pearson <- cor(env.unique)
 round(env.pearson,2)
-# 绘图前重新排位变量
+
 library(gclus)
 env.o <- order.single(env.pearson)
 
-# pairs()用来绘制双变量散点图矩阵
-# panelutils.r给pairs()提供定义参数
 library(MESS)
 pairs(env.unique[,env.o], 
 	lower.panel=panel.smooth, upper.panel=panel.cor, 
@@ -334,10 +330,7 @@ pairs(env.unique[,env.o],
 	diag.panel=panel.hist, main="Pearson correlation coefficient rho")
 dev.off()
 
-
-# 使用Kendall秩相关系数tau比较环境变量
-# 环境变量之间的Kendall秩相关
-# 黑白图
+# Kendall's tau
 env.ken <- cor(env.unique, method="kendall")
 env.o <- order.single(env.ken)
 pairs(env.unique[,env.o], 
@@ -345,21 +338,9 @@ pairs(env.unique[,env.o],
 	no.col=TRUE, method = "kendall",
 	diag.panel=panel.hist, main="Kendall correlation coefficient tau")
 
-
-
-# 另，做ln转化后看看
-env.ln.unique <- log(env.unique, exp(1))
-# ln转化后，出现NAN，反正该列不重要，去除该列
-env.ln.unique <- env.ln.unique[, !colnames(env.ln.unique) %in% c("Annual.Mean.Temperature")]
-env.ln.pearson <- cor(env.ln.unique)
-round(env.ln.pearson,2)
-library(gclus)
-env.ln.o <- order.single(env.ln.pearson)
-library(MESS)
-pairs(env.ln.unique[,env.ln.o], 
-	diag.panel=panel.hist, main="Pearson correlation coefficient rho")
-
-############### 地理距离和空间自相关
+##########################################################################################
+############### geographic distances and spatial auto-correlation ########################
+##########################################################################################
 
 ps2df <- function(inputps)
 	{tempdf <- as.data.frame(as(otu_table(inputps), "matrix"))
