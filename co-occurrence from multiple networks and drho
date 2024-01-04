@@ -74,11 +74,10 @@ drho <- function(inputmergerho)
 
 # examples:
 mergerho.intvls.SSalt.ln.allA.p05 <- merge.rho(edgels.intvls.SSalt.ln.allA.p05)
-# count times of rho occurred, and remove edges (rho.count = 1)
+# count times of rho occurred, and remove edges only formed once among all networks (rho.count = 1)
 mergerho.intvls.SSalt.ln.allA.p05$rho.count <- rowSums(!is.na(mergerho.intvls.SSalt.ln.allA.p05[,3:12]))
 mergerho.intvls.SSalt.ln.allA.p05.fltr <- mergerho.intvls.SSalt.ln.allA.p05[mergerho.intvls.SSalt.ln.allA.p05[,"rho.count"]>1,]
-
-
-# 4、drho/dgradient
-
-# intvls.ln
+# calculate the changes of rho between common edges.
+drho.intvls.SSalt.ln.allA.p05 <- drho(mergerho.intvls.SSalt.ln.allA.p05.fltr)
+# locate core interactions present in 5 or more networks 
+mergerho.intvls.SSalt.ln.allA.p05.core <- mergerho.intvls.SSalt.ln.allA.p05[mergerho.intvls.SSalt.ln.allA.p05[,"rho.count"]>4,]
