@@ -33,7 +33,9 @@ env.allA <- as.data.frame(as(sample_data(ps.allA),"matrix"))
 env.allB <- as.data.frame(as(sample_data(ps.allB),"matrix"))
 env.allF <- as.data.frame(as(sample_data(ps.allF),"matrix"))
 
-###################### map
+##########################################################################################
+############################## map #######################################################
+##########################################################################################
 
 library(ggplot2)
 library(ggmap)
@@ -147,7 +149,9 @@ ps2stack(ps.allF.site.cla.top12.RA, class.F, sitesHL) + scale_fill_manual(values
 100*colSums(otu_table(ps.allB.site.cla))/sum(otu_table(ps.allB.site.cla));tax_table(ps.allB.site.cla)
 100*colSums(otu_table(ps.allF.site.cla))/sum(otu_table(ps.allF.site.cla));tax_table(ps.allF.site.cla)
 
-###################### richness level
+##########################################################################################
+############################## richness level ############################################
+##########################################################################################
 
 ps2alphadiv <- function(inputps)
 {
@@ -244,324 +248,7 @@ ggplot(alphadiv.allF, aes(x=factor(Location, levels=sitesLH), y=simp)) +
 ##########################################################################################
 ############################## core microbiome ###########################################
 ##########################################################################################
-
-
-# Generate list of real local communitis
-ps2sitepsls <- function(inputps)
-{
-	temp.sites <- unique(sample_data(inputps)$Location)
-	temp.sitepsls <- list(NULL)
-	for (i in 1:length(temp.sites))
-	{
-		temp.siteps <- prune_samples(as.logical(sample_data(inputps)$Location==temp.sites[i]), inputps)
-		temp.siteps <- prune_taxa(taxa_sums(temp.siteps) > 0, temp.siteps)
-		temp.sitepsls[[i]] <- temp.siteps
-	}
-	temp.sitepsls
-}
-
-ps2TierNCorepsls <- function(inputps, inputRAthres, inputN)
-{
-	k <- as.integer(100/inputN)
-	temp.TierNCorepsls <- list(NULL)
-	for (i in 1:inputN)
-	{
-		temp.TierNCore.ps <- ps2TierNCore.better(inputps, i*k/100, inputRAthres)
-		temp.TierNCorepsls[[i]] <- temp.TierNCore.ps
-		print(paste(i, "out of", inputN, sep = " "))
-	}
-	temp.TierNCorepsls
-}
-
-# Calculate core taxon set at thresholds of inputfreqthres and inputRAthres
-ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
-	{
-	tempps1 <- transform_sample_counts(inputps, function(x){x / sum(x)}) # ra transforms
-	if(all(taxa_sums(tempps1) < inputRAthres))
-		{
-		print("No core was found at this RA criteria.")
-		return(0)
-		}
-	else
-		{
-		tempps1 <- filter_taxa(tempps1, function(x) sum(x) >= inputRAthres, TRUE)
-		taxls1 <- rownames(tax_table(tempps1))
-		}
-	tempdf <- as.data.frame(otu_table(inputps))
-	tempdf <- +(tempdf != 0) 
-	tempps2 <- phyloseq(otu_table(tempdf, taxa_are_rows=FALSE), sample_data(inputps), tax_table(inputps))
-	if (all(taxa_sums(tempps2) < dim(otu_table(tempps2))[1]*inputfreqthres)) 
-		{print("No core was found at this frequency criteria.")
-		return(0)
-		}
-	else
-		{
-		tempps2 <- prune_taxa(taxa_sums(tempps2) >= dim(otu_table(tempps2))[1]*inputfreqthres, tempps2) 
-		taxls2 <- rownames(tax_table(tempps2))
-		taxls <- taxls2[taxls2 %in% taxls1]
-		tempps <- prune_taxa(taxls, inputps)
-		tempps
-		}
-	}
-
-psls2TierNCorepslsls <- function(inputpsls, inputRAthres, inputN)
-{
-	temp.pslsls <- list(NULL)
-	for (j in 1:length(inputpsls))
-	{
-		temp.TierNCorepslspsls <- ps2TierNCorepsls(inputpsls[[j]], inputRAthres, inputN)
-		temp.pslsls[[j]] <- temp.TierNCorepslspsls
-		print(paste(j, "out of", length(inputpsls), "missions have been accomplished!", sep = " "))
-	}
-	temp.pslsls
-}
-
-# 用上面已经计算了的core的psls得到通过TierN阈值的taxa，列出并生成list
-Corepsls2taxls <- function(inputTierNCorepsls)
-{
-	Nps <- length(inputTierNCorepsls)
-	temptaxls <- vector("list", Nps)
-	for (i in 1:Nps)
-	{
-		if (class(inputTierNCorepsls[[i]]) == "phyloseq")
-			{
-				temptaxdf <- as.data.frame(as.matrix(tax_table(inputTierNCorepsls[[i]])))
-				temptaxls[[i]] <- temptaxdf
-			}
-		else next
-	}
-	temptaxls
-}
-
-# 看看ls里有多少个NULL
-checkNULLinls <- function (inputls)
-	{
-	nNULL = 0
-	for (i in 1:length(inputls))
-		{
-		if (is.null(inputls[[i]])){nNULL = nNULL+1}
-		}		
-	nNULL
-	}
-
-# inputtaxlv处输入分类等级“Species”等
-counttaxls <- function(inputtaxls, inputtaxlv)
-	{
-	Ntaxls <- length(inputtaxls)
-	alltaxls <- NULL
-	for (i in 1:Ntaxls)
-		{
-		if (is.null(inputtaxls[[i]])) next
-		else
-			{
-			alltaxls <- c(alltaxls,as.character(inputtaxls[[i]][,inputtaxlv]))
-			}
-		}
-	if (is.null(alltaxls)) 
-		{
-		tempcounttaxls <- as.data.frame(matrix(0,nrow=1,ncol=1))
-		colnames(tempcounttaxls) <- "alltaxls"
-		}
-	else 
-		{
-		tempcounttaxls <- table(alltaxls)
-		tempcounttaxls <- as.data.frame(tempcounttaxls)
-		}
-	tempcounttaxls$outof <- Ntaxls
-	tempcounttaxls$NAnumber <- checkNULLinls(inputtaxls)
-	tempcounttaxls
-	}
-
-# 通过TierNCorepslsls或TierNnonCorepslsls，生成counttaxls的ls，格式为list，每个[[i]]是taxls的dataframe，1:i是N个阈值阶段
-counttaxdfls <- function(inputpslsls, inputtaxlv)
-{
-	Nps <- length(inputpslsls)
-	Nthres <- length(inputpslsls[[1]])
-	# 先对inputpslsls[[j]][[i]]中相同J（即相同阈值）的i个ps，用repls2taxls计算taxls，得到df
-	temptaxdfls <- vector("list", Nthres)
-	for (i in 1:Nthres)
-	{
-		temppsls <- vector("list", Nps)
-		for (j in 1:Nps)
-		{
-			temppsls[[j]] <- inputpslsls[[j]][[i]]			
-		}
-		temptaxdf <- Corepsls2taxls(temppsls)
-		tempcounttaxls <- counttaxls(temptaxdf, inputtaxlv)
-		temptaxdfls[[i]] <- tempcounttaxls
-		# temptaxdfls[[i]] <- Corepsls2taxls(temppsls)
-	}
-	temptaxdfls
-}
-
-# 然后根据各frequency阈值，分别确定真实群落和模拟群落的coretaxls，然后比较
-taxdfls2Coretaxls <- function(inputtaxdfls)
-{
-	Nthres <- length(inputtaxdfls)
-	Nsample <- inputtaxdfls[[1]][1,"outof"]
-	tempCoretaxls <- vector("list", Nthres)
-	for (i in 1:Nthres)
-	{
-		tempCoretax <- inputtaxdfls[[i]][inputtaxdfls[[i]]$Freq >= i*Nsample/Nthres,]
-		tempCoretaxls[[i]] <- tempCoretax
-	}
-	tempCoretaxls
-}
-
-# Randomly subsample
-randomsubsetps <- function(inputps, inputsize)
-	{
-	temppsleng <- length(row.names(sample_data(inputps)))
-	temprandomsub <- sample(1:temppsleng,inputsize)
-	outputps <- prune_samples(1:temppsleng %in% temprandomsub, inputps) 
-	outputps <- prune_taxa(taxa_sums(outputps) > 0, outputps)
-	outputps	
-	}
-
-#  Make replicates list
-mkreplist <- function(inputps, inputsize, inputrepsize)
-	{
-	tempreplist <- list(NULL)
-	for (i in 1:inputrepsize)
-		{
-		tempsubps <- randomsubsetps(inputps, inputsize)
-		tempreplist[[i]] <- tempsubps
-		print(paste(i, "out of", inputrepsize, sep = " "))
-		}
-	tempreplist
-	}
-
-psls2TierNCorepslsls <- function(inputpsls, inputRAthres, inputN)
-{
-	temp.pslsls <- list(NULL)
-	for (j in 1:length(inputpsls))
-	{
-		temp.TierNCorepslspsls <- ps2TierNCorepsls(inputpsls[[j]], inputRAthres, inputN)
-		temp.pslsls[[j]] <- temp.TierNCorepslspsls
-		print(paste(j, "out of", length(inputpsls), "missions have been accomplished!", sep = " "))
-	}
-	temp.pslsls
-}
-
-compareCoreRA <- function(inputoverallps, inputCoretaxls1, inputCoretaxls2)
-{
-    if(length(inputCoretaxls1)==length(inputCoretaxls2))
-    {
-        tempsumall <- sum(otu_table(inputoverallps))
-        tempN <- length(inputCoretaxls1)
-        tempCoreRA <- data.frame(NULL)
-        for (i in 1:tempN)
-        {
-            # 这里判断输入Coretaxls的df是否为0行数据，是的话说明该阈值下不存在Coretax，直接等于0
-            if(dim(inputCoretaxls1[[i]])[1]==0) 
-            {
-                tempCoreRA1 = 0
-            }
-            else
-            {
-                tempCoreps1 <- prune_taxa(as.data.frame(tax_table(inputoverallps))$Species %in% inputCoretaxls1[[i]]$alltaxls, inputoverallps)
-                tempCore1 = sum(otu_table(tempCoreps1))
-                tempCoreRA1 = tempCore1/tempsumall
-            }
-            if(dim(inputCoretaxls2[[i]])[1]==0) 
-            {
-                tempCoreRA2 = 0
-            }
-            else
-            {
-                tempCoreps2 <- prune_taxa(as.data.frame(tax_table(inputoverallps))$Species %in% inputCoretaxls2[[i]]$alltaxls, inputoverallps)
-                tempCore2 = sum(otu_table(tempCoreps2))
-                tempCoreRA2 = tempCore2/tempsumall
-            }
-            tempCoreRA <- rbind(tempCoreRA, data.frame(tempsumall, tempCore1, tempCore2, tempCoreRA1, tempCoreRA2))
-        }
-        colnames(tempCoreRA) <- c("SumOriginal","AbundCore1","AbundCore2","RACore1","RACore2")
-        tempCoreRA
-    }
-    else
-    {
-        print("Both Coretaxls should be in same length.")
-    }    
-}
-
-compareCoreRA <- function(inputoverallps, inputCoretaxls1, inputCoretaxls2)
-{
-    if(length(inputCoretaxls1)==length(inputCoretaxls2))
-    {
-        tempsumall <- sum(otu_table(inputoverallps))
-        tempN <- length(inputCoretaxls1)
-        tempCoreRA <- data.frame(NULL)
-        for (i in 1:tempN)
-        {
-            # 这里判断输入Coretaxls的df是否为0行数据，是的话说明该阈值下不存在Coretax，直接等于0
-            if(dim(inputCoretaxls1[[i]])[1]==0) 
-            {
-                tempCoreRA1 = 0
-            }
-            else
-            {
-                tempCoreps1 <- prune_taxa(as.data.frame(tax_table(inputoverallps))$Species %in% inputCoretaxls1[[i]]$alltaxls, inputoverallps)
-                tempCore1 = sum(otu_table(tempCoreps1))
-                tempCoreRA1 = tempCore1/tempsumall
-            }
-            if(dim(inputCoretaxls2[[i]])[1]==0) 
-            {
-                tempCoreRA2 = 0
-            }
-            else
-            {
-                tempCoreps2 <- prune_taxa(as.data.frame(tax_table(inputoverallps))$Species %in% inputCoretaxls2[[i]]$alltaxls, inputoverallps)
-                tempCore2 = sum(otu_table(tempCoreps2))
-                tempCoreRA2 = tempCore2/tempsumall
-            }
-            tempCoreRA <- rbind(tempCoreRA, data.frame(tempsumall, tempCore1, tempCore2, tempCoreRA1, tempCoreRA2))
-        }
-        colnames(tempCoreRA) <- c("SumOriginal","AbundCore1","AbundCore2","RACore1","RACore2")
-        tempCoreRA
-    }
-    else
-    {
-        print("Both Coretaxls should be in same length.")
-    }    
-}
-
-compareCoretaxls <- function(inputCoretaxls1, inputCoretaxls2)
-{
-	if(length(inputCoretaxls1) == length(inputCoretaxls2))
-		{
-			Nthres <- length(inputCoretaxls1)
-			tempcompareCoretaxls <- data.frame(NULL)
-			for (i in 1:Nthres)
-			{
-				tempCoretaxls1 <- toString(inputCoretaxls1[[i]]$alltaxls)
-				tempCoretaxls2 <- toString(inputCoretaxls2[[i]]$alltaxls)
-				tempoverlap <- toString(tempCoretaxls1[tempCoretaxls1 %in% tempCoretaxls2])
-				tempNo.Coretaxls1 <- length(inputCoretaxls1[[i]]$alltaxls)
-				tempNo.Coretaxls2 <- length(inputCoretaxls2[[i]]$alltaxls)
-				tempNo.overlap <- length(as.character(inputCoretaxls1[[i]][inputCoretaxls1[[i]]$alltaxls %in% inputCoretaxls2[[i]]$alltaxls, "alltaxls"]))
-				tempdf <- data.frame(Coretax1 = tempCoretaxls1, Coretax2 = tempCoretaxls2, Overlap = tempoverlap, No.Coretax1 = tempNo.Coretaxls1, No.Coretax2 = tempNo.Coretaxls2, No.Overlap = tempNo.overlap, Consistence = 2*tempNo.overlap/(tempNo.Coretaxls1+tempNo.Coretaxls2))
-				tempcompareCoretaxls <- rbind(tempcompareCoretaxls, tempdf)
-			}
-			tempcompareCoretaxls
-		}
-	else
-		{
-			print("Input lists do not match.")
-		}
-}
-
-plotCoreDataCombine <- function(inputCoreDataCombine, inputcol1, inputcol2)
-{
-    par(mar = c(5, 4, 4, 4) + 0.3)              # Additional space for second y-axis
-    plot(1:100, inputCoreDataCombine$No.Coretax2, lwd = 3, lty = 1, col = inputcol2, type = c("l"), xlab = "", ylab = "Core taxon numbers")
-    lines(1:100, inputCoreDataCombine$No.Coretax1, lwd = 3, lty = 1, col = inputcol1, type = c("l"))
-    par(new = TRUE)                             # Add new plot
-    plot(1:100, inputCoreDataCombine$RACore2, lwd = 3, lty = 2, col = inputcol2, type = c("l"), axes = FALSE, xlab = "", ylab = "")
-    lines(1:100, inputCoreDataCombine$RACore1, lwd = 3, lty = 2, col = inputcol1, type = c("l"))
-    lines(1:100, inputCoreDataCombine$Consistence, lwd = 2, lty = 1, col = "darkgray", type = c("l"))
-    axis(side = 4, at = pretty(range(inputCoreDataCombine$RACore1)))      # Add second axis
-}
-
+# see branch "Core_taxa" for functions
 
 # allA
 sitepsls.allA <- ps2sitepsls(ps.allA)
@@ -615,18 +302,9 @@ CoreDataCombine.TierNCorepslsls.allF.0.100 <- cbind(compareCoretaxls.TierNCoreps
 plotCoreDataCombine(CoreDataCombine.TierNCorepslsls.allF.0.100, "#6A3D9A", "#CAB2D6")
 
 
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
 ##########################################################################################
-############### 环境变量相关性分析，初步检测环境变量间的相关性，初步筛选环境变量 ###############
+############### correlation among environmental factors ##################################
 ##########################################################################################
-
-# 整理数据，去掉重复和不合适的数据变量
-
 
 env.unique <- comb.samdf[, !colnames(comb.samdf) %in% c("Location","Replicates","Samples","Latitude","Longitude")]
 env.unique <- env.unique[, !colnames(env.unique) %in% c("Mean.Temperature.of.Warmest.Quarter", "Mean.Temperature.of.Coldest.Quarter", "Precipitation.of.Wettest.Month", "Precipitation.of.Driest.Month", "Precipitation.of.Wettest.Quarter", "Precipitation.of.Driest.Quarter", "Precipitation.of.Warmest.Quarter", "Precipitation.of.Coldest.Quarter", "Max.Temperature.of.Warmest.Month", "Min.Temperature.of.Coldest.Month", "Temperature.Annual.Range", "Mean.Temperature.of.Wettest.Quarter", "Mean.Temperature.of.Driest.Quarter", "January", "February", "March", "April", "May", "August", "September", "October", "November", "December", "Range")]
