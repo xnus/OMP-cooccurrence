@@ -339,7 +339,7 @@ pairs(env.unique[,env.o],
 	diag.panel=panel.hist, main="Kendall correlation coefficient tau")
 
 ##########################################################################################
-############### geographic distances and spatial auto-correlation ########################
+######### NMDS, geographic distances and spatial auto-correlation ########################
 ##########################################################################################
 
 ps2df <- function(inputps)
@@ -421,19 +421,9 @@ plot(dfgeodistpair.allF$geodist,dfgeodistpair.allF$dfdist, col = "#6A3D9A", main
 abline(lm(dfdist ~ geodist, data = dfgeodistpair.allF))
 par(mfrow=c(1,1))
 
-
-
-
-# 结论是有一定的空间自相关。
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-############### NMDS，ANOSIM，Envfit
-
 env.allA <- as.data.frame(as(sample_data(ps.allA),"matrix"))
 env.allB <- as.data.frame(as(sample_data(ps.allB),"matrix"))
 env.allF <- as.data.frame(as(sample_data(ps.allF),"matrix"))
-
 
 ps2NMDS <- function(inputps, inputdist)
 	{
@@ -444,18 +434,11 @@ ps2NMDS <- function(inputps, inputdist)
 
 nmds.ps.allA.b <- ps2NMDS(ps.allA, "bray")
 ef.ps.allA.b <- envfit(nmds.ps.allA.b, env.allA[,c("pH", "Altitude", "TOM", "AP", "AK", "SSalt", "TN", "AN")])
-
 nmds.ps.allB.b <- ps2NMDS(ps.allB, "bray")
 ef.ps.allB.b <- envfit(nmds.ps.allB.b, env.allB[,c("Altitude", "AP", "SSalt", "TOM", "AK", "TN", "pH", "AN")])
-
 nmds.ps.allF.b <- ps2NMDS(ps.allF, "bray")
 ef.ps.allF.b <- envfit(nmds.ps.allF.b, env.allF[,c("Altitude", "SSalt", "AP", "TOM", "AK", "TN", "pH", "AN")])
 
-
-
-
-# 根据图中点的分布，最终选取braycurtis分布。
-# 2和1的区别在于有没有shape
 nmds2plot2 <- function (inputnmds, inputenv)
 	{
 	temp.nmdsplot <- as.data.frame(scores(inputnmds)$sites)
@@ -465,15 +448,6 @@ nmds2plot2 <- function (inputnmds, inputenv)
 	rm(temp.nmdsplot)
 	temp.nmdsplot.gg
 	}
-# nmds2plot1 <- function (inputnmds, inputenv)
-	# {
-	# temp.nmdsplot <- as.data.frame(scores(inputnmds))
-	# temp.nmdsplot$Rad <- inputenv$Rad
-	# temp.nmdsplot.gg<- ggplot(temp.nmdsplot, aes(x=NMDS1, y=NMDS2, color = Rad)) + stat_ellipse() + geom_point()
-	# rm(temp.nmdsplot)
-	# temp.nmdsplot.gg
-	# }
-
 nmds2plot1.Site <- function (inputnmds, inputenv)
 	{
 	temp.nmdsplot <- as.data.frame(scores(inputnmds)$sites)
@@ -487,14 +461,10 @@ nmds.gg.ps.allA.Site.b <- nmds2plot1.Site(nmds.ps.allA.b, env.allA)
 nmds.gg.ps.allB.Site.b <- nmds2plot1.Site(nmds.ps.allB.b, env.allB)
 nmds.gg.ps.allF.Site.b <- nmds2plot1.Site(nmds.ps.allF.b, env.allF)
 
-
 Site.col <- env.allB[,c("Location","Altitude")]
 Site.col <- unique(Site.col)
 Site.col <- Site.col[order(Site.col$Altitude, decreasing = TRUE),]
 Site.col <- unique(Site.col$Location)
-# Site.col.allA <- data.frame(Site = Site.col, Site.col = colorRampPalette(c("#FFC2C3", "#0E0301"))(17))
-# Site.col.allB <- data.frame(Site = Site.col, Site.col = colorRampPalette(c("#D5D2C1", "#694911"))(17))
-# Site.col.allF <- data.frame(Site = Site.col, Site.col = colorRampPalette(c("#9BCFB8", "#072A24"))(17))
 
 Site.col.allA <- data.frame(Site = Site.col, Site.col = colorRampPalette(c("#A6CEE3", "#002060"))(17))
 Site.col.allB <- data.frame(Site = Site.col, Site.col = colorRampPalette(c("#FB9A99", "#c00000"))(17))
@@ -510,9 +480,7 @@ nmds.gg.ps.allB.Site.b + scale_color_manual(values = Site.col.allB$Site.col),
 nmds.gg.ps.allF.Site.b + scale_color_manual(values = Site.col.allF$Site.col),
 	ncol = 1, nrow = 3)
 
-
-
-# 将地点按环境因子从低到高排列，然后赋予颜色
+# NMDS colorred with environmental gradients
 
 assigncolor <- function(inputenv, inputfactor, inputcol1, inputcol2)
 {
@@ -552,10 +520,6 @@ nmds2plot.EnvFact <- function (inputnmds, inputenv, inputfactor, inputcol1, inpu
 	temp.nmdsplot.gg
 	}
 
-"#A6CEE3", "#1F78B4", "#002060"
-"#FB9A99", "#E31A1C", "#c00000"
-"#CAB2D6", "#6A3D9A", "#4f216d"
-
 nmds2plot.EnvFact(nmds.ps.allA.b, env.allA, "SSalt", "#A6CEE3", "#002060", "SSalt")
 nmds2plot.EnvFact(nmds.ps.allA.b, env.allA, "TN", "#A6CEE3", "#002060", "TN")
 nmds2plot.EnvFact(nmds.ps.allA.b, env.allA, "pH", "#A6CEE3", "#002060", "pH")
@@ -571,38 +535,9 @@ nmds2plot.EnvFact(nmds.ps.allF.b, env.allF, "TOM", "#CAB2D6", "#4f216d", "TOM")
 nmds2plot.EnvFact(nmds.ps.allF.b, env.allF, "SSalt", "#CAB2D6", "#4f216d", "SSalt")
 nmds2plot.EnvFact(nmds.ps.allF.b, env.allF, "AN", "#CAB2D6", "#4f216d", "AN")
 
-# Site.col1 <- Site.col[order(Site.col$Location, decreasing = FALSE),]
-# nmds.gg.ps.Site.b + scale_color_manual(values = Site.col1$Site.col)
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-
-################## 导入服务器上算的数据
-
-attach("ZhJ-Pamir-all-1.0-network-delta-linux-edgefltr.Rdata")
-edgels.bi.allB.001.80 <- edgels.bi.allB.001.80
-edgels.bi.allF.001.80 <- edgels.bi.allF.001.80
-edgels.allB.001.80 <- edgels.allB.001.80
-edgels.allF.001.80 <- edgels.allF.001.80
-
-edgels.bi.allB.001.70 <- edgels.bi.allB.001.70
-edgels.bi.allF.001.70 <- edgels.bi.allF.001.70
-edgels.allB.001.70 <- edgels.allB.001.70
-edgels.allF.001.70 <- edgels.allF.001.70
-detach("ZhJ-Pamir-all-1.0-network-delta-linux-edgefltr.Rdata")
-
-attach("ZhJ-Pamir-allA-allF-1.0-network-delta-linux.Rdata")
-edgels.bi.allA.001.80 <- edgels.bi.allA.001.80
-edgels.allA.001.80 <- edgels.allA.001.80
-
-edgels.bi.allA.001.70 <- edgels.bi.allA.001.70
-edgels.allA.001.70 <- edgels.allA.001.70
-detach("ZhJ-Pamir-allA-allF-1.0-network-delta-linux.Rdata")
-
-
-
-
+##########################################################################################
+################################# network analysis #######################################
+##########################################################################################
 
 node.property <- function(inputedgelsls)
 {
@@ -633,17 +568,11 @@ node.property <- function(inputedgelsls)
 Nodepropls.edgels.bi.all.001.80 <- node.property(list(edgels.bi.allA.001.80,edgels.bi.allB.001.80,edgels.bi.allF.001.80))
 Nodepropls.edgels.bi.all.001.70 <- node.property(list(edgels.bi.allA.001.70,edgels.bi.allB.001.70,edgels.bi.allF.001.70))
 
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-# 画图，绘制abundance和vertex property的散点图
-
+# ploting: abundance vs vertex property
 Nodepropls.edgels.bi.allA.001.80 <- Nodepropls.edgels.bi.all.001.80[[1]]
 Nodepropls.edgels.bi.allB.001.80 <- Nodepropls.edgels.bi.all.001.80[[2]]
 Nodepropls.edgels.bi.allF.001.80 <- Nodepropls.edgels.bi.all.001.80[[3]]
 
-# 分别加入abundance数据、分类信息和颜色。
 tax.ab.allA <- as.data.frame(as(otu_table(ps.allA),"matrix"))
 colnames(tax.ab.allA) <- as.data.frame(tax_table(ps.allA))[,dim(tax_table(ps.allA))[2]]
 tax.ab.allA <- as.data.frame(t(tax.ab.allA)); tax.ab.allA$Abudance <- rowSums(tax.ab.allA)
@@ -703,37 +632,6 @@ Nodepropls.edgels.bi.allF.001.80$Class <- gsub("_.*","", Nodepropls.edgels.bi.al
 Nodepropls.edgels.bi.allF.001.80 <- merge(Nodepropls.edgels.bi.allF.001.80, Nodepropls.ClassCol.allF, by.x = "Class", all.x = TRUE)
 Nodepropls.edgels.bi.allF.001.80$Color[is.na(Nodepropls.edgels.bi.allF.001.80$Color)] <- "#969696"
 
-
-
-
-Abudance
-lnAb
-log10Ab
-
-Degree
-Betweenness
-Hcentrality
-plot(Nodepropls.edgels.bi.allA.001.80$Abudance, 
-	Nodepropls.edgels.bi.allA.001.80$Betweenness, 
-	col = Nodepropls.edgels.bi.allA.001.80$Color, pch = 19,
-	# xlab = "Abudance", ylab = "Betweenness")
-	xlab = NA, ylab = NA)
-plot(Nodepropls.edgels.bi.allB.001.80$Abudance, 
-	Nodepropls.edgels.bi.allB.001.80$Betweenness, 
-	col = Nodepropls.edgels.bi.allB.001.80$Color, pch = 19,
-	# xlab = "Abudance", ylab = "Betweenness")
-	xlab = NA, ylab = NA)
-plot(Nodepropls.edgels.bi.allF.001.80$Abudance, 
-	Nodepropls.edgels.bi.allF.001.80$Betweenness, 
-	col = Nodepropls.edgels.bi.allF.001.80$Color, pch = 19,
-	# xlab = "Abudance", ylab = "Betweenness")
-	xlab = NA, ylab = NA)
-
-plot(Nodepropls.edgels.bi.allA.001.80$lnAb, Nodepropls.edgels.bi.allA.001.80$Degree, col = Nodepropls.edgels.bi.allA.001.80$Color, pch = 19)
-plot(Nodepropls.edgels.bi.allB.001.80$lnAb, Nodepropls.edgels.bi.allB.001.80$Degree, col = Nodepropls.edgels.bi.allB.001.80$Color, pch = 19)
-plot(Nodepropls.edgels.bi.allF.001.80$lnAb, Nodepropls.edgels.bi.allF.001.80$Degree, col = Nodepropls.edgels.bi.allF.001.80$Color, pch = 19)
-
-
 par(mfrow = c(3, 3))
 plot(Nodepropls.edgels.bi.allA.001.80$Abudance, 
 	Nodepropls.edgels.bi.allA.001.80$Degree, 
@@ -748,7 +646,6 @@ plot(Nodepropls.edgels.bi.allF.001.80$Abudance,
 	col = Nodepropls.edgels.bi.allF.001.80$Color, pch = 19, cex =2.5,
 	xlab = NA, ylab = NA)
 
-
 plot(Nodepropls.edgels.bi.allA.001.80$Abudance, 
 	Nodepropls.edgels.bi.allA.001.80$Betweenness, 
 	col = Nodepropls.edgels.bi.allA.001.80$Color, pch = 19, cex =2.5,
@@ -761,7 +658,6 @@ plot(Nodepropls.edgels.bi.allF.001.80$Abudance,
 	Nodepropls.edgels.bi.allF.001.80$Betweenness, 
 	col = Nodepropls.edgels.bi.allF.001.80$Color, pch = 19, cex =2.5,
 	xlab = NA, ylab = NA)
-
 
 plot(Nodepropls.edgels.bi.allA.001.80$Abudance, 
 	Nodepropls.edgels.bi.allA.001.80$Hcentrality, 
@@ -778,14 +674,10 @@ plot(Nodepropls.edgels.bi.allF.001.80$Abudance,
 par(mfrow = c(1, 1))
 
 
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
 
 ##########################################################################################
-############################## MRM，检验最强的环境变量 #####################################
+############################## MRM #######################################################
 ##########################################################################################
-
-# 读取各微生物群落物种组成数据，然后计算1-Bray-curtis相似度，再ln转化
 
 ps2BCsim <- function(inputps)
 	{
@@ -799,8 +691,7 @@ BCsim.allA <- ps2BCsim(ps.allA)
 BCsim.allB <- ps2BCsim(ps.allB)
 BCsim.allF <- ps2BCsim(ps.allF)
 
-# BCsim.allB中居然出现了0，使得ln后出现inf，只好在这里手动改成0.00000001
-
+# 0 values in BCsim.allB resulted inf with ln transformation, thus mannually change 0s to 0.00000001
 mod.BCsim.allB <- as.matrix(BCsim.allB)
 mod.BCsim.allB[mod.BCsim.allB==0] <- 0.00000001
 BCsim.allB <- as.dist(mod.BCsim.allB)
@@ -809,16 +700,11 @@ BCsim.ln.allA <- log(BCsim.allA, exp(1))
 BCsim.ln.allB <- log(BCsim.allB, exp(1))
 BCsim.ln.allF <- log(BCsim.allF, exp(1))
 
-#地理坐标和环境组成数据已经在上文读取进来了，继续执行
-#geosphere 包 distm() 根据经纬度计算采样点间的地理距离
-#默认距离单位是米，除以 1000 可转换为千米单位，并再通过 ln(x+1) 转化
 library(geosphere)
-
 ps2sitedis <- function(inputps)
 {
 	library(geosphere)
 	tempenv <- as.data.frame(as(sample_data(inputps),"matrix"))
-	# env读入之后，里面数字列都被变成了character，需要用apply+as.numeric转换成numeric
 	tempsitedis <- distm(apply(tempenv[,c("Longitude", "Latitude")], 2, as.numeric)) / 1000
 	rownames(tempsitedis) <- rownames(tempenv)
 	colnames(tempsitedis) <- rownames(tempenv)
@@ -830,7 +716,6 @@ ps2sitedis.ln <- function(inputps)
 {
 	library(geosphere)
 	tempenv <- as.data.frame(as(sample_data(inputps),"matrix"))
-	# env读入之后，里面数字列都被变成了character，需要用apply+as.numeric转换成numeric
 	tempsitedis <- distm(apply(tempenv[,c("Longitude", "Latitude")], 2, as.numeric)) / 1000
 	tempsitedis <- log(tempsitedis+1, exp(1))
 	rownames(tempsitedis) <- rownames(tempenv)
@@ -847,13 +732,8 @@ sitedis.ln.allA <- ps2sitedis.ln(ps.allA)
 sitedis.ln.allB <- ps2sitedis.ln(ps.allB)
 sitedis.ln.allF <- ps2sitedis.ln(ps.allF)
  
-# 对于各环境变量，均计算为欧氏距离测度
-# 首先根据共相关结果去除June、July、AnnualAverage、Temperature Seasonality、Annual Mean Temperature因子，只用altitude代表
 envfactls <- colnames(env.unique)
 envfactls <- envfactls[!(envfactls %in% c("SampID", "Annual.Mean.Temperature", "Temperature.Seasonality", "June", "July", "AnnualAverage"))]
-
-
-# envfactls <- apply(envfactls, 2, as.numeric)
 
 ps2envdisls <- function(inputps, inputenvfactls)
 {
@@ -872,23 +752,14 @@ envdisls.allA <- ps2envdisls(ps.allA, envfactls)
 envdisls.allB <- ps2envdisls(ps.allB, envfactls)
 envdisls.allF <- ps2envdisls(ps.allF, envfactls)
 
-
-#由于使用地理或环境的距离测度作为自变量拟合多元线性回归
-#如果期望后续能够通过回归系数比较各自变量的相对重要性，需要统一对它们进行标准化处理
-#MuMIn 包 stdize() 可以实现对地理或环境距离测度的标准化功能，参考自：https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4961435/
+# MuMIn stdize(), refer to：https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4961435/
 library(MuMIn)
-
 envdisls.stdize.allA <- lapply(envdisls.allA, stdize)
 envdisls.stdize.allB <- lapply(envdisls.allB, stdize)
 envdisls.stdize.allF <- lapply(envdisls.allF, stdize)
 
-##MRM 分析
+# MRM
 library(ecodist)
- 
-#详情 ?MRM，以下基于 9999 次置换估计 p 值
- 
-#综合多个自变量矩阵的多元线性回归，在多元回归中，各自变量的回归系数即“偏回归系数”
-#“偏回归系数”的含义，对于某个自变量而言，当控制其它自变量保持恒定时，该自变量对响应变量的相对效应
 
 MRMfit.allA <- MRM(BCsim.ln.allA~
 sitedis.ln.allA + 
@@ -935,16 +806,6 @@ envdisls.stdize.allF[["Precipitation.Seasonality"]], nperm = 10000, method = "li
 MRMfit.allA
 MRMfit.allB
 MRMfit.allF
-
-
-save.image("ZhJ-Pamir-all-2.0-general-delta.Rdata")
-
-
-
-#如果希望获得各个自变量独立的回归系数，则单独执行各自变量与响应变量的一元回归即可
-#例如考虑地理距离对群落组成相似度独立的效应
-fit_MRM_site <- MRM(comm_sim~site_dis, nperm = 10000, method = ''linear'')
-fit_MRM_site
 
 
 ##########################################################################################
