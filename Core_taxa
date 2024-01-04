@@ -16,8 +16,8 @@ ps2sitepsls <- function(inputps)
 }
 
 
-
 # Calculate core taxon set at thresholds of inputfreqthres and inputRAthres
+# inputRAthres here is fixed, usually set to 0.
 ps2TierNCore.better <- function(inputps, inputfreqthres, inputRAthres)
 	{
 	tempps1 <- transform_sample_counts(inputps, function(x){x / sum(x)}) # ra transforms
