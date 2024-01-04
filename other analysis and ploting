@@ -540,6 +540,55 @@ nmds2plot.EnvFact(nmds.ps.allF.b, env.allF, "AN", "#CAB2D6", "#4f216d", "AN")
 ################################# network analysis #######################################
 ##########################################################################################
 
+# see branch "OMP-based co-occurrence" for functions
+
+edgels.bi.allA <- ps2edgels.bi(ps.allA)
+edgels.bi.allB <- ps2edgels.bi(ps.allB)
+edgels.bi.allF <- ps2edgels.bi(ps.allF)
+
+edgels.allA <- ps2edgels(ps.allA)
+edgels.allB <- ps2edgels(ps.allB)
+edgels.allF <- ps2edgels(ps.allF)
+
+edgels.bi.allA.001.80 <- edgefltr(edgels.bi.allA, 0.001, 0.8, -0.8)
+edgels.bi.allB.001.80 <- edgefltr(edgels.bi.allB, 0.001, 0.8, -0.8)
+edgels.bi.allF.001.80 <- edgefltr(edgels.bi.allF, 0.001, 0.8, -0.8)
+
+edgels.allA.001.80 <- edgefltr(edgels.allA, 0.001, 0.8, -0.8)
+edgels.allB.001.80 <- edgefltr(edgels.allB, 0.001, 0.8, -0.8)
+edgels.allF.001.80 <- edgefltr(edgels.allF, 0.001, 0.8, -0.8)
+
+addEVattribute <- function(inputedgelist, inputps)
+{
+	temp.igraph <- graph_from_edgelist(as.matrix(inputedgelist[,1:2]), directed = FALSE)
+    # temp.nodels <- unique(c(inputedgelist$ASV1, inputedgelist$ASV2))
+    tempdf <- as.data.frame(as(otu_table(inputps),"matrix"))
+    temp.taxinfo <- as.data.frame(tax_table(inputps))
+    temp.taxinfo <- temp.taxinfo[temp.taxinfo$Species %in% names(V(temp.igraph)),]
+    temp.taxinfo$taxid <- rownames(temp.taxinfo)
+    rownames(temp.taxinfo) <- temp.taxinfo$Species
+    temp.taxinfo <- cbind(temp.taxinfo, data.frame(abund = apply(tempdf[,colnames(tempdf) %in% temp.taxinfo$taxid],2,sum)))
+    temp.taxinfo$RA <- 100*temp.taxinfo$abund/sum(tempdf)
+	V(temp.igraph)$RA <- temp.taxinfo[,"RA"]
+	V(temp.igraph)$abund <- temp.taxinfo[,"abund"]
+	V(temp.igraph)$Species <- as.character(temp.taxinfo[,"Species"])
+	# V(temp.igraph)$colnode <- inputcolnode[round(100*V(temp.igraph)$ra)+1] # 这里需要+1，不然当ra四舍五入为0的时候就会出错，变成最高值。
+	E(temp.igraph)$weight <- inputedgelist$rho
+	E(temp.igraph)$weight <- NA
+	temp.igraph
+}
+
+
+igraph.edgels.bi.allA.001.80 <- addEVattribute(edgels.bi.allA.001.80, ps.allA)
+igraph.edgels.bi.allB.001.80 <- addEVattribute(edgels.bi.allB.001.80, ps.allB)
+igraph.edgels.bi.allF.001.80 <- addEVattribute(edgels.bi.allF.001.80, ps.allF)
+
+igraph.edgels.allA.001.80 <- addEVattribute(edgels.allA.001.80, ps.allA)
+igraph.edgels.allB.001.80 <- addEVattribute(edgels.allB.001.80, ps.allB)
+igraph.edgels.allF.001.80 <- addEVattribute(edgels.allF.001.80, ps.allF)
+
+# network visualization is conducted in Gephi.
+
 node.property <- function(inputedgelsls)
 {
 	temp.nprpls <- list(NULL)
@@ -565,7 +614,6 @@ node.property <- function(inputedgelsls)
 }
 
 Nodepropls.edgels.bi.all.001.80 <- node.property(list(edgels.bi.allA.001.80,edgels.bi.allB.001.80,edgels.bi.allF.001.80))
-Nodepropls.edgels.bi.all.001.70 <- node.property(list(edgels.bi.allA.001.70,edgels.bi.allB.001.70,edgels.bi.allF.001.70))
 
 # ploting: abundance vs vertex property
 Nodepropls.edgels.bi.allA.001.80 <- Nodepropls.edgels.bi.all.001.80[[1]]
@@ -920,6 +968,84 @@ TITANextr.PPS.ln.allA <- TITAN.extract(titan.PPS.ln.allA)
 TITANextr.AN.ln.allA <- TITAN.extract(titan.AN.ln.allA)
 
 
+## bacterial dataset
+
+ps.min3.PPS.ln.allB <- prune_taxa(colSums(otu_table(ps.PPS.ln.allB) != 0) > 2, ps.PPS.ln.allB) # colSums计算的是otu_table(ps.SSalt.ln.allA) != 0中True的数量，大于2时，满足minFre为3的要求
+ps.min3.Moisture.ln.allB <- prune_taxa(colSums(otu_table(ps.Moisture.ln.allB) != 0) > 2, ps.Moisture.ln.allB)
+
+df.min3.PPS.ln.allB <- as.data.frame(as(otu_table(ps.min3.PPS.ln.allB),"matrix")); colnames(df.min3.PPS.ln.allB) <- tax_table(ps.min3.PPS.ln.allB)[,7]
+colnames(df.min3.PPS.ln.allB) <- gsub("_", " ", colnames(df.min3.PPS.ln.allB))
+df.min3.Moisture.ln.allB <- as.data.frame(as(otu_table(ps.min3.Moisture.ln.allB),"matrix")); colnames(df.min3.Moisture.ln.allB) <- tax_table(ps.min3.Moisture.ln.allB)[,7]
+colnames(df.min3.Moisture.ln.allB) <- gsub("_", " ", colnames(df.min3.Moisture.ln.allB))
+
+titan.PPS.ln.allB <- titan(sample_data(ps.min3.PPS.ln.allB), df.min3.PPS.ln.allB)
+titan.Moisture.ln.allB <- titan(sample_data(ps.min3.Moisture.ln.allB), df.min3.Moisture.ln.allB)
+
+plot_taxa_ridges(titan.PPS.ln.allB, xlab = "Precipitation seasonality", n_ytaxa = 617)
+plot_taxa_ridges(titan.Moisture.ln.allB, xlab = "Moisture", n_ytaxa = 231)
+
+plot_sumz(titan.PPS.ln.allB, filter = TRUE)
+plot_sumz(titan.Moisture.ln.allB, filter = TRUE)
+
+TITANextr.PPS.ln.allB <- TITAN.extract(titan.PPS.ln.allB)
+TITANextr.Moisture.ln.allB <- TITAN.extract(titan.Moisture.ln.allB)
+
+
+## fungal dataset
+
+ps.min3.TN.ln.allF <- prune_taxa(colSums(otu_table(ps.TN.ln.allF) != 0) > 2, ps.TN.ln.allF)
+ps.min3.Moisture.ln.allF <- prune_taxa(colSums(otu_table(ps.Moisture.ln.allF) != 0) > 2, ps.Moisture.ln.allF)
+ps.min3.TOM.ln.allF <- prune_taxa(colSums(otu_table(ps.TOM.ln.allF) != 0) > 2, ps.TOM.ln.allF)
+ps.min3.SSalt.ln.allF <- prune_taxa(colSums(otu_table(ps.SSalt.ln.allF) != 0) > 2, ps.SSalt.ln.allF) # colSums计算的是otu_table(ps.SSalt.ln.allF) != 0中True的数量，大于2时，满足minFre为3的要求
+ps.min3.AN.ln.allF <- prune_taxa(colSums(otu_table(ps.AN.ln.allF) != 0) > 2, ps.AN.ln.allF)
+
+df.min3.TN.ln.allF <- as.data.frame(as(otu_table(ps.min3.TN.ln.allF),"matrix")); colnames(df.min3.TN.ln.allF) <- tax_table(ps.min3.TN.ln.allF)[,7]
+colnames(df.min3.TN.ln.allF) <- gsub("_", " ", colnames(df.min3.TN.ln.allF))
+df.min3.Moisture.ln.allF <- as.data.frame(as(otu_table(ps.min3.Moisture.ln.allF),"matrix")); colnames(df.min3.Moisture.ln.allF) <- tax_table(ps.min3.Moisture.ln.allF)[,7]
+colnames(df.min3.Moisture.ln.allF) <- gsub("_", " ", colnames(df.min3.Moisture.ln.allF))
+df.min3.TOM.ln.allF <- as.data.frame(as(otu_table(ps.min3.TOM.ln.allF),"matrix")); colnames(df.min3.TOM.ln.allF) <- tax_table(ps.min3.TOM.ln.allF)[,7]
+colnames(df.min3.TOM.ln.allF) <- gsub("_", " ", colnames(df.min3.TOM.ln.allF))
+df.min3.SSalt.ln.allF <- as.data.frame(as(otu_table(ps.min3.SSalt.ln.allF),"matrix")); colnames(df.min3.SSalt.ln.allF) <- tax_table(ps.min3.SSalt.ln.allF)[,7]
+colnames(df.min3.SSalt.ln.allF) <- gsub("_", " ", colnames(df.min3.SSalt.ln.allF))
+df.min3.AN.ln.allF <- as.data.frame(as(otu_table(ps.min3.AN.ln.allF),"matrix")); colnames(df.min3.AN.ln.allF) <- tax_table(ps.min3.AN.ln.allF)[,7]
+colnames(df.min3.AN.ln.allF) <- gsub("_", " ", colnames(df.min3.AN.ln.allF))
+
+titan.TN.ln.allF <- titan(sample_data(ps.min3.TN.ln.allF), df.min3.TN.ln.allF)
+titan.Moisture.ln.allF <- titan(sample_data(ps.min3.Moisture.ln.allF), df.min3.Moisture.ln.allF)
+titan.TOM.ln.allF <- titan(sample_data(ps.min3.TOM.ln.allF), df.min3.TOM.ln.allF)
+titan.SSalt.ln.allF <- titan(sample_data(ps.min3.SSalt.ln.allF), df.min3.SSalt.ln.allF)
+titan.AN.ln.allF <- titan(sample_data(ps.min3.AN.ln.allF), df.min3.AN.ln.allF)
+
+plot_taxa_ridges(titan.TN.ln.allF, xlab = "Total nitrogen", n_ytaxa = 164)
+plot_taxa_ridges(titan.Moisture.ln.allF, xlab = "Moisture", n_ytaxa = 176)
+plot_taxa_ridges(titan.TOM.ln.allF, xlab = "Total organic matter", n_ytaxa = 112)
+plot_taxa_ridges(titan.SSalt.ln.allF, xlab = "Soluble salt", n_ytaxa = 198)
+plot_taxa_ridges(titan.AN.ln.allF, xlab = "Available nitrogen", n_ytaxa = 99)
+
+plot_sumz(titan.TN.ln.allF, filter = TRUE)
+plot_sumz(titan.Moisture.ln.allF, filter = TRUE)
+plot_sumz(titan.TOM.ln.allF, filter = TRUE)
+plot_sumz(titan.SSalt.ln.allF, filter = TRUE)
+plot_sumz(titan.AN.ln.allF, filter = TRUE)
+
+TITANextr.TN.ln.allF <- TITAN.extract(titan.TN.ln.allF)
+TITANextr.Moisture.ln.allF <- TITAN.extract(titan.Moisture.ln.allF)
+TITANextr.TOM.ln.allF <- TITAN.extract(titan.TOM.ln.allF)
+TITANextr.SSalt.ln.allF <- TITAN.extract(titan.SSalt.ln.allF)
+TITANextr.AN.ln.allF <- TITAN.extract(titan.AN.ln.allF)
+
+
+###### TITAN vs OMP net
+
+
+TITANvsOMPnet <- read.csv("TITANvsOMPnet.csv", header=T)
+
+barplot(cbind(EI, CI, EN, CD, ED) ~ X, data = TITANvsOMPnet)
+barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[1:5,])
+barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[6:7,])
+barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[8:12,])
+
+
 ##########################################################################################
 ################################### OMP-based-co-occurrence ##############################
 ##########################################################################################
@@ -1271,65 +1397,6 @@ env.intvls.PPS.ln.allA <- F.intervals(min(sample_data(ps.PPS.ln.allA)),max(sampl
 env.intvls.AN.ln.allA <- F.intervals(min(sample_data(ps.AN.ln.allA)),max(sample_data(ps.AN.ln.allA)),10,0.3)
 
 
-# 第三部分是rho数据，从merge.rho处开始
-
-mergerho.titan.intvls.SSalt.ln.allA.p05 <- merge.rho(edgels.intvls.SSalt.ln.allA.p05)
-mergerho.titan.intvls.TN.ln.allA.p05 <- merge.rho(edgels.intvls.TN.ln.allA.p05)
-mergerho.titan.intvls.pH.ln.allA.p05 <- merge.rho(edgels.intvls.pH.ln.allA.p05)
-mergerho.titan.intvls.PPS.ln.allA.p05 <- merge.rho(edgels.intvls.PPS.ln.allA.p05)
-mergerho.titan.intvls.AN.ln.allA.p05 <- merge.rho(edgels.intvls.AN.ln.allA.p05)
-
-rownames(mergerho.titan.intvls.SSalt.ln.allA.p05) <- paste(mergerho.titan.intvls.SSalt.ln.allA.p05[,1],mergerho.titan.intvls.SSalt.ln.allA.p05[,2], sep = "-")
-mergerho.titan.intvls.SSalt.ln.allA.p05 <- t(mergerho.titan.intvls.SSalt.ln.allA.p05[,3:12])
-mergerho.titan.intvls.SSalt.ln.allA.p05[is.na(mergerho.titan.intvls.SSalt.ln.allA.p05)] <- 0 # 需要把NA转换成0
-mergerho.titan.min3.intvls.SSalt.ln.allA.p05 <- mergerho.titan.intvls.SSalt.ln.allA.p05[,colSums(mergerho.titan.intvls.SSalt.ln.allA.p05 != 0) > 2]
-mergerho.titan.min3.intvls.SSalt.ln.allA.p05 <- as.data.frame(sapply(mergerho.titan.min3.intvls.SSalt.ln.allA.p05,as.numeric))
-
-temp.transform.above <- function(inputdf)
-{
-	tempdf1 <- inputdf
-	rownames(tempdf1) <- paste(tempdf1[,1],tempdf1[,2], sep = "-")
-	tempdf1 <- t(tempdf1[,3:12])
-	tempdf1[is.na(tempdf1)] <- 0 # 需要把NA转换成0
-	tempdf2 <- as.data.frame(tempdf1[,colSums(tempdf1 != 0) > 2])
-	tempdf2 <- as.data.frame(sapply(tempdf2,as.numeric))
-	tempdf2
-}
-
-mergerho.titan.min3.intvls.SSalt.ln.allA.p05 <- temp.transform.above(mergerho.titan.intvls.SSalt.ln.allA.p05)
-mergerho.titan.min3.intvls.TN.ln.allA.p05 <- temp.transform.above(mergerho.titan.intvls.TN.ln.allA.p05)
-mergerho.titan.min3.intvls.pH.ln.allA.p05 <- temp.transform.above(mergerho.titan.intvls.pH.ln.allA.p05)
-mergerho.titan.min3.intvls.PPS.ln.allA.p05 <- temp.transform.above(mergerho.titan.intvls.PPS.ln.allA.p05)
-mergerho.titan.min3.intvls.AN.ln.allA.p05 <- temp.transform.above(mergerho.titan.intvls.AN.ln.allA.p05)
-
-env.intvls.SSalt.ln.allA <- F.intervals(min(sample_data(ps.SSalt.ln.allA)),max(sample_data(ps.SSalt.ln.allA)),10,0.3)
-env.intvls.TN.ln.allA <- F.intervals(min(sample_data(ps.TN.ln.allA)),max(sample_data(ps.TN.ln.allA)),10,0.3)
-env.intvls.pH.ln.allA <- F.intervals(min(sample_data(ps.pH.ln.allA)),max(sample_data(ps.pH.ln.allA)),10,0.3)
-env.intvls.PPS.ln.allA <- F.intervals(min(sample_data(ps.PPS.ln.allA)),max(sample_data(ps.PPS.ln.allA)),10,0.3)
-env.intvls.AN.ln.allA <- F.intervals(min(sample_data(ps.AN.ln.allA)),max(sample_data(ps.AN.ln.allA)),10,0.3)
-
-titan.mergerho.SSalt.ln.allA <- titan(env.intvls.SSalt.ln.allA[,1], mergerho.titan.min3.intvls.SSalt.ln.allA.p05+1)
-titan.mergerho.TN.ln.allA <- titan(env.intvls.TN.ln.allA[,1], mergerho.titan.min3.intvls.TN.ln.allA.p05+1)
-titan.mergerho.pH.ln.allA <- titan(env.intvls.pH.ln.allA[,1], mergerho.titan.min3.intvls.pH.ln.allA.p05+1)
-titan.mergerho.PPS.ln.allA <- titan(env.intvls.PPS.ln.allA[,1], mergerho.titan.min3.intvls.PPS.ln.allA.p05+1)
-titan.mergerho.AN.ln.allA <- titan(env.intvls.AN.ln.allA[,1], mergerho.titan.min3.intvls.AN.ln.allA.p05+1)
-# 数据太少，无法计算出结果。
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
-
-
-###### TITAN vs OMP net
-
-
-TITANvsOMPnet <- read.csv("TITANvsOMPnet.csv", header=T)
-
-barplot(cbind(EI, CI, EN, CD, ED) ~ X, data = TITANvsOMPnet)
-barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[1:5,])
-barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[6:7,])
-barplot(cbind(ED, CD, EN, CI, EI) ~ X, data = TITANvsOMPnet[8:12,])
-
-save.image("ZhJ-Pamir-allA-2.0-windowed-delta.Rdata")
 
 
 
@@ -1678,53 +1745,7 @@ mergerho.intvls2PosNegPercent(mergerho.intvls.Moisture.ln.allB.p05[,3:12])
 
 save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
 
-####################################TITAN
-# 分两部分
-# 第一部分是原始群落数据
-# 第二部分是群落区间数据
-# 第三部分是rho数据，从merge.rho处开始
-library(TITAN2)
 
-# 第一部分是原始群落数据
-ps.PPS.ln.allB
-ps.Moisture.ln.allB
-
-# taxa的frequency最小值是3，需要去除少于3的那些。
-ps.min3.PPS.ln.allB <- prune_taxa(colSums(otu_table(ps.PPS.ln.allB) != 0) > 2, ps.PPS.ln.allB) # colSums计算的是otu_table(ps.SSalt.ln.allA) != 0中True的数量，大于2时，满足minFre为3的要求
-ps.min3.Moisture.ln.allB <- prune_taxa(colSums(otu_table(ps.Moisture.ln.allB) != 0) > 2, ps.Moisture.ln.allB)
-
-df.min3.PPS.ln.allB <- as.data.frame(as(otu_table(ps.min3.PPS.ln.allB),"matrix")); colnames(df.min3.PPS.ln.allB) <- tax_table(ps.min3.PPS.ln.allB)[,7]
-colnames(df.min3.PPS.ln.allB) <- gsub("_", " ", colnames(df.min3.PPS.ln.allB))
-df.min3.Moisture.ln.allB <- as.data.frame(as(otu_table(ps.min3.Moisture.ln.allB),"matrix")); colnames(df.min3.Moisture.ln.allB) <- tax_table(ps.min3.Moisture.ln.allB)[,7]
-colnames(df.min3.Moisture.ln.allB) <- gsub("_", " ", colnames(df.min3.Moisture.ln.allB))
-
-titan.PPS.ln.allB <- titan(sample_data(ps.min3.PPS.ln.allB), df.min3.PPS.ln.allB)
-titan.Moisture.ln.allB <- titan(sample_data(ps.min3.Moisture.ln.allB), df.min3.Moisture.ln.allB)
-
-plot_taxa_ridges(titan.PPS.ln.allB, xlab = "Precipitation seasonality", n_ytaxa = 617)
-# There are 617 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 277
-# Number of Increasers = 340
-plot_taxa_ridges(titan.Moisture.ln.allB, xlab = "Moisture", n_ytaxa = 231)
-# There are 231 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 139
-# Number of Increasers = 92
-
-plot_sumz(titan.PPS.ln.allB, filter = TRUE)
-plot_sumz(titan.Moisture.ln.allB, filter = TRUE)
-
-TITAN.extract <- function(inputTITAN.out)
-{
-	library(purrr)
-	temp.sppmax <- as.data.frame(pluck(inputTITAN.out, "sppmax"))
-	temp.sppmax$id <- rownames(temp.sppmax)
-	temp.sppmax$filter <- 0
-	temp.extract <- temp.sppmax[temp.sppmax$purity >= inputTITAN.out$arguments[[7]] & temp.sppmax$reliability >= inputTITAN.out$arguments[[8]],]
-	temp.extract
-}
-
-TITANextr.PPS.ln.allB <- TITAN.extract(titan.PPS.ln.allB)
-TITANextr.Moisture.ln.allB <- TITAN.extract(titan.Moisture.ln.allB)
 
 save.image("ZhJ-Pamir-allB-2.0-windowed-delta.Rdata")
 
@@ -2586,101 +2607,6 @@ mergerho.intvls2PosNegPercent(mergerho.intvls.AN.ln.allF.p05[,3:12])
 
 save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
 
-
-####################################TITAN
-# 分两部分
-# 第一部分是原始群落数据
-# 第二部分是群落区间数据
-# 第三部分是rho数据，从merge.rho处开始
-library(TITAN2)
-
-# 第一部分是原始群落数据
-ps.TN.ln.allF
-ps.Moisture.ln.allF
-ps.TOM.ln.allF
-ps.SSalt.ln.allF
-ps.AN.ln.allF
-
-# taxa的frequency最小值是3，需要去除少于3的那些。
-ps.min3.TN.ln.allF <- prune_taxa(colSums(otu_table(ps.TN.ln.allF) != 0) > 2, ps.TN.ln.allF)
-ps.min3.Moisture.ln.allF <- prune_taxa(colSums(otu_table(ps.Moisture.ln.allF) != 0) > 2, ps.Moisture.ln.allF)
-ps.min3.TOM.ln.allF <- prune_taxa(colSums(otu_table(ps.TOM.ln.allF) != 0) > 2, ps.TOM.ln.allF)
-ps.min3.SSalt.ln.allF <- prune_taxa(colSums(otu_table(ps.SSalt.ln.allF) != 0) > 2, ps.SSalt.ln.allF) # colSums计算的是otu_table(ps.SSalt.ln.allF) != 0中True的数量，大于2时，满足minFre为3的要求
-ps.min3.AN.ln.allF <- prune_taxa(colSums(otu_table(ps.AN.ln.allF) != 0) > 2, ps.AN.ln.allF)
-
-df.min3.TN.ln.allF <- as.data.frame(as(otu_table(ps.min3.TN.ln.allF),"matrix")); colnames(df.min3.TN.ln.allF) <- tax_table(ps.min3.TN.ln.allF)[,7]
-colnames(df.min3.TN.ln.allF) <- gsub("_", " ", colnames(df.min3.TN.ln.allF))
-df.min3.Moisture.ln.allF <- as.data.frame(as(otu_table(ps.min3.Moisture.ln.allF),"matrix")); colnames(df.min3.Moisture.ln.allF) <- tax_table(ps.min3.Moisture.ln.allF)[,7]
-colnames(df.min3.Moisture.ln.allF) <- gsub("_", " ", colnames(df.min3.Moisture.ln.allF))
-df.min3.TOM.ln.allF <- as.data.frame(as(otu_table(ps.min3.TOM.ln.allF),"matrix")); colnames(df.min3.TOM.ln.allF) <- tax_table(ps.min3.TOM.ln.allF)[,7]
-colnames(df.min3.TOM.ln.allF) <- gsub("_", " ", colnames(df.min3.TOM.ln.allF))
-df.min3.SSalt.ln.allF <- as.data.frame(as(otu_table(ps.min3.SSalt.ln.allF),"matrix")); colnames(df.min3.SSalt.ln.allF) <- tax_table(ps.min3.SSalt.ln.allF)[,7]
-colnames(df.min3.SSalt.ln.allF) <- gsub("_", " ", colnames(df.min3.SSalt.ln.allF))
-df.min3.AN.ln.allF <- as.data.frame(as(otu_table(ps.min3.AN.ln.allF),"matrix")); colnames(df.min3.AN.ln.allF) <- tax_table(ps.min3.AN.ln.allF)[,7]
-colnames(df.min3.AN.ln.allF) <- gsub("_", " ", colnames(df.min3.AN.ln.allF))
-
-titan.TN.ln.allF <- titan(sample_data(ps.min3.TN.ln.allF), df.min3.TN.ln.allF)
-titan.Moisture.ln.allF <- titan(sample_data(ps.min3.Moisture.ln.allF), df.min3.Moisture.ln.allF)
-titan.TOM.ln.allF <- titan(sample_data(ps.min3.TOM.ln.allF), df.min3.TOM.ln.allF)
-titan.SSalt.ln.allF <- titan(sample_data(ps.min3.SSalt.ln.allF), df.min3.SSalt.ln.allF)
-titan.AN.ln.allF <- titan(sample_data(ps.min3.AN.ln.allF), df.min3.AN.ln.allF)
-
-plot_taxa_ridges(titan.TN.ln.allF, xlab = "Total nitrogen", n_ytaxa = 164)
-# There are 164 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 99
-# Number of Increasers = 65
-plot_taxa_ridges(titan.Moisture.ln.allF, xlab = "Moisture", n_ytaxa = 176)
-# There are 176 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 61
-# Number of Increasers = 115
-plot_taxa_ridges(titan.TOM.ln.allF, xlab = "Total organic matter", n_ytaxa = 112)
-# There are 112 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 66
-# Number of Increasers = 46
-plot_taxa_ridges(titan.SSalt.ln.allF, xlab = "Soluble salt", n_ytaxa = 198)
-# There are 198 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 151
-# Number of Increasers = 47
-plot_taxa_ridges(titan.AN.ln.allF, xlab = "Available nitrogen", n_ytaxa = 99)
-# There are 99 indicator taxa of 90 possible for plotting
-# Number of Decreasers = 52
-# Number of Increasers = 47
-
-plot_sumz(titan.TN.ln.allF, filter = TRUE)
-plot_sumz(titan.Moisture.ln.allF, filter = TRUE)
-plot_sumz(titan.TOM.ln.allF, filter = TRUE)
-plot_sumz(titan.SSalt.ln.allF, filter = TRUE)
-plot_sumz(titan.AN.ln.allF, filter = TRUE)
-
-
-# TITAN.extract <- function(inputTITAN.out)
-# {
-# 	library(purrr)
-# 	# temp.sppmax <- inputTITAN.out %>% pluck("sppmax") %>% tibble::as_tibble() %>% mutate(id = row.names(inputTITAN.out$sppmax))
-# 	# temp.sppmax <- mutate(tibble::as_tibble(pluck(inputTITAN.out, "sppmax")), id = row.names(inputTITAN.out$sppmax))
-# 	temp.sppmax <- pluck(inputTITAN.out, "sppmax")
-# 	temp.sppmax$filter <- 0
-# 	temp.pure_and_reliable_ndcs <- with(temp.sppmax$filter <- 0, which(temp.sppmax$purity >= inputTITAN.out$arguments[[7]] & temp.sppmax$reliability >= inputTITAN.out$arguments[[8]]))
-# 	temp.extract <- temp.sppmax[temp.pure_and_reliable_ndcs,]
-# 	temp.extract
-# }
-
-TITAN.extract <- function(inputTITAN.out)
-{
-	library(purrr)
-	temp.sppmax <- as.data.frame(pluck(inputTITAN.out, "sppmax"))
-	temp.sppmax$id <- rownames(temp.sppmax)
-	temp.sppmax$filter <- 0
-	temp.extract <- temp.sppmax[temp.sppmax$purity >= inputTITAN.out$arguments[[7]] & temp.sppmax$reliability >= inputTITAN.out$arguments[[8]],]
-	temp.extract
-}
-
-TITANextr.TN.ln.allF <- TITAN.extract(titan.TN.ln.allF)
-TITANextr.Moisture.ln.allF <- TITAN.extract(titan.Moisture.ln.allF)
-TITANextr.TOM.ln.allF <- TITAN.extract(titan.TOM.ln.allF)
-TITANextr.SSalt.ln.allF <- TITAN.extract(titan.SSalt.ln.allF)
-TITANextr.AN.ln.allF <- TITAN.extract(titan.AN.ln.allF)
-
 save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
 
 # 第二部分是群落区间数据
@@ -2696,49 +2622,6 @@ env.intvls.Moisture.ln.allF <- F.intervals(min(sample_data(ps.Moisture.ln.allF))
 env.intvls.TOM.ln.allF <- F.intervals(min(sample_data(ps.TOM.ln.allF)),max(sample_data(ps.TOM.ln.allF)),10,0.3)
 env.intvls.SSalt.ln.allF <- F.intervals(min(sample_data(ps.SSalt.ln.allF)),max(sample_data(ps.SSalt.ln.allF)),10,0.3)
 env.intvls.AN.ln.allF <- F.intervals(min(sample_data(ps.AN.ln.allF)),max(sample_data(ps.AN.ln.allF)),10,0.3)
-
-
-# 第三部分是rho数据，从merge.rho处开始
-
-mergerho.titan.intvls.TN.ln.allF.p05 <- merge.rho(edgels.intvls.TN.ln.allF.p05)
-mergerho.titan.intvls.Moisture.ln.allF.p05 <- merge.rho(edgels.intvls.Moisture.ln.allF.p05)
-mergerho.titan.intvls.TOM.ln.allF.p05 <- merge.rho(edgels.intvls.TOM.ln.allF.p05)
-mergerho.titan.intvls.SSalt.ln.allF.p05 <- merge.rho(edgels.intvls.SSalt.ln.allF.p05)
-mergerho.titan.intvls.AN.ln.allF.p05 <- merge.rho(edgels.intvls.AN.ln.allF.p05)
-
-temp.transform.above <- function(inputdf)
-{
-	tempdf1 <- inputdf
-	rownames(tempdf1) <- paste(tempdf1[,1],tempdf1[,2], sep = "-")
-	tempdf1 <- t(tempdf1[,3:12])
-	tempdf1[is.na(tempdf1)] <- 0 # 需要把NA转换成0
-	tempdf2 <- as.data.frame(tempdf1[,colSums(tempdf1 != 0) > 2])
-	tempdf2 <- as.data.frame(sapply(tempdf2,as.numeric))
-	tempdf2
-}
-
-mergerho.titan.min3.intvls.TN.ln.allF.p05 <- temp.transform.above(mergerho.titan.intvls.TN.ln.allF.p05)
-mergerho.titan.min3.intvls.Moisture.ln.allF.p05 <- temp.transform.above(mergerho.titan.intvls.Moisture.ln.allF.p05)
-mergerho.titan.min3.intvls.TOM.ln.allF.p05 <- temp.transform.above(mergerho.titan.intvls.TOM.ln.allF.p05)
-mergerho.titan.min3.intvls.SSalt.ln.allF.p05 <- temp.transform.above(mergerho.titan.intvls.SSalt.ln.allF.p05)
-mergerho.titan.min3.intvls.AN.ln.allF.p05 <- temp.transform.above(mergerho.titan.intvls.AN.ln.allF.p05)
-
-env.intvls.TN.ln.allF <- F.intervals(min(sample_data(ps.TN.ln.allF)),max(sample_data(ps.TN.ln.allF)),10,0.3)
-env.intvls.Moisture.ln.allF <- F.intervals(min(sample_data(ps.Moisture.ln.allF)),max(sample_data(ps.Moisture.ln.allF)),10,0.3)
-env.intvls.TOM.ln.allF <- F.intervals(min(sample_data(ps.TOM.ln.allF)),max(sample_data(ps.TOM.ln.allF)),10,0.3)
-env.intvls.SSalt.ln.allF <- F.intervals(min(sample_data(ps.SSalt.ln.allF)),max(sample_data(ps.SSalt.ln.allF)),10,0.3)
-env.intvls.AN.ln.allF <- F.intervals(min(sample_data(ps.AN.ln.allF)),max(sample_data(ps.AN.ln.allF)),10,0.3)
-
-titan.mergerho.TN.ln.allF <- titan(env.intvls.TN.ln.allF[,1], mergerho.titan.min3.intvls.TN.ln.allF.p05)
-titan.mergerho.Moisture.ln.allF <- titan(env.intvls.Moisture.ln.allF[,1], mergerho.titan.min3.intvls.Moisture.ln.allF.p05)
-titan.mergerho.TOM.ln.allF <- titan(env.intvls.TOM.ln.allF[,1], mergerho.titan.min3.intvls.TOM.ln.allF.p05)
-titan.mergerho.SSalt.ln.allF <- titan(env.intvls.SSalt.ln.allF[,1], mergerho.titan.min3.intvls.SSalt.ln.allF.p05)
-titan.mergerho.AN.ln.allF <- titan(env.intvls.AN.ln.allF[,1], mergerho.titan.min3.intvls.AN.ln.allF.p05)
-
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-save.image("ZhJ-Pamir-allF-2.0-windowed-delta.Rdata")
-
-
 
 
 
